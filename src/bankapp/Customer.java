@@ -17,15 +17,17 @@ public class Customer {
 	public Customer(String firstName, String middleName, String lastName, String email, String phoneNumber,
 			String address) {
 
-		this.firstName = initializeFirstName();
-		this.middleName = initializeMiddleName();
-		this.lastName = initializeLastName();
-		this.email = initializeEmail();
-		this.phoneNumber = initializePhoneNumber();
-		this.address = initializeAddress();
+		this.firstName = firstName;
+		this.middleName = middleName;
+		this.lastName = lastName;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.address = address;
 		this.bankAccount = new BankAccount();
 	}
-	
+
+	/* move these into Menu class
+
 	private String initializeFirstName() {
 		System.out.println("Enter your first name: ");
 		String firstName = userInput.nextLine();
@@ -61,6 +63,7 @@ public class Customer {
 		String address = userInput.nextLine();
 		return address;
 	}
+	*/
 	
 	public String getFirstName() {
 		return firstName;
