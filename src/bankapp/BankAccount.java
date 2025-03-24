@@ -1,16 +1,12 @@
 package bankapp;
 
 public class BankAccount {
-
     private double balance;
-    private double creditBalance; 
+    private double creditBalance;
 
-    public BankAccount(double creditBalance) {
-        if (creditBalance < 0) {
-            throw new IllegalArgumentException("Credit balance cannot be negative");
-        }
+    public BankAccount() {
         this.balance = 0;
-        this.creditBalance = creditBalance;
+        this.creditBalance = 0;
     }
     
     public void deposit(double amount) {
@@ -19,19 +15,29 @@ public class BankAccount {
         }
         this.balance += amount;
     }
-
-    public double getCreditBalance(){
-        return this.creditBalance;
-    }
-
-    public void changeCredit(double newCredit){
-        if(newCredit < 0){
-            throw new IllegalArgumentException("Credit cannot be negative");
-        }
-        this.creditBalance = newCredit;
-    }
-
+    
     public double getCurrentBalance() {
-        return this.balance;
+        return balance;
+    }
+    
+    public double getCreditBalance() {
+        return creditBalance;
+    }
+    
+    public void borrowCredit(double amount) {
+        if(amount < 0) {
+            throw new IllegalArgumentException("Borrow amount cannot be negative");
+        }
+        this.creditBalance += amount;
+    }
+    
+    public void repayCredit(double amount) {
+        if(amount < 0) {
+            throw new IllegalArgumentException("Repayment amount cannot be negative");
+        }
+        if(amount > this.creditBalance) {
+            throw new IllegalArgumentException("Cannot repay more than the current credit balance");
+        }
+        this.creditBalance -= amount;
     }
 }
