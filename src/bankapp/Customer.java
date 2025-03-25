@@ -1,19 +1,18 @@
 package bankapp;
 
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 public class Customer {
 
-	private Scanner userInput;
 	private String firstName;
 	private String middleName;
 	private String lastName;
 	private String email;
 	private String phoneNumber;
 	private String address;
-	private BankAccount bankAccount;
+	private BankAccount account;
 
+	// Constructor if customer has a middle name
 	public Customer(String firstName, String middleName, String lastName, String email, String phoneNumber,
 			String address) {
 
@@ -23,9 +22,52 @@ public class Customer {
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.address = address;
-		this.bankAccount = new BankAccount();
+		this.account = new BankAccount();
 	}
+	
+	// Constructor if customer has no middle name
+	public Customer(String firstName, String lastName, String email, String phoneNumber,
+			String address) {
 
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.address = address;
+		this.account = new BankAccount();
+	}
+	
+	public String getFirstName() {
+		return firstName;
+	}
+	
+	public String getMiddleName() {
+		if (middleName == null) {
+			throw new NoSuchElementException("This customer has no middle name.");
+		}
+		return middleName;
+	}
+	
+	public String getLastName() {
+		return lastName;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+	
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+	
+	public String getAddress() {
+		return address;
+	}
+	
+	public BankAccount getaccount() {
+		return account;
+	}
+	
 	/* move these into Menu class
 
 	private String initializeFirstName() {
@@ -64,32 +106,4 @@ public class Customer {
 		return address;
 	}
 	*/
-	
-	public String getFirstName() {
-		return firstName;
-	}
-	
-	public String getMiddleName() {
-		if (middleName == null) {
-			throw new NoSuchElementException("This customer has no middle name.");
-		}
-		return middleName;
-	}
-	
-	public String getLastName() {
-		return lastName;
-	}
-	
-	public String getEmail() {
-		return email;
-	}
-	
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-	
-	public String getAddress() {
-		return address;
-	}
-	
 }
