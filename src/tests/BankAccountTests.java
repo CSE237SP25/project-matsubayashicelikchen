@@ -1,37 +1,62 @@
 package tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
-
 import bankapp.BankAccount;
 
 public class BankAccountTests {
-
-	@Test
-	public void testSimpleDeposit() {
-		//1. Create objects to be tested
-		BankAccount account = new BankAccount();
-		
-		//2. Call the method being tested
-		account.deposit(25);
-		
-		//3. Use assertions to verify results
-		assertEquals(account.getCurrentBalance(), 25.0, 0.005);
-	}
-	
-	@Test
-	public void testNegativeDeposit() {
-		//1. Create object to be tested
-		BankAccount account = new BankAccount();
-
-		try {
-			account.deposit(-25);
-			fail();
-		} catch (IllegalArgumentException e) {
-			assertTrue(e != null);
-		}
-	}
+    @Test
+    public void testDeposit() {
+        BankAccount account = new BankAccount();
+        account.deposit(100);
+        assertEquals(100, account.getCurrentBalance(), 0.001);
+    }
+    
+    @Test
+    public void testNegativeDeposit() {
+        BankAccount account = new BankAccount();
+        assertThrows(IllegalArgumentException.class, () -> account.deposit(-50));
+    }
+    
+    @Test
+    public void testInitialCreditBalance() {
+        BankAccount account = new BankAccount();
+        assertEquals(0, account.getCreditBalance(), 0.001);
+    }
+    
+    @Test
+    public void testBorrowCredit() {
+        BankAccount account = new BankAccount();
+        account.borrowCredit(200);
+        assertEquals(200, account.getCreditBalance(), 0.001);
+    }
+    
+    @Test
+    public void testBorrowNegativeCredit() {
+        BankAccount account = new BankAccount();
+        assertThrows(IllegalArgumentException.class, () -> account.borrowCredit(-100));
+    }
+    
+    @Test
+    public void testRepayCredit() {
+        BankAccount account = new BankAccount();
+        account.borrowCredit(300);
+        account.repayCredit(100);
+        assertEquals(200, account.getCreditBalance(), 0.001);
+    }
+    
+    @Test
+    public void testRepayNegativeCredit() {
+        BankAccount account = new BankAccount();
+        account.borrowCredit(300);
+        assertThrows(IllegalArgumentException.class, () -> account.repayCredit(-50));
+    }
+    
+    @Test
+    public void testRepayMoreThanCredit() {
+        BankAccount account = new BankAccount();
+        account.borrowCredit(150);
+        assertThrows(IllegalArgumentException.class, () -> account.repayCredit(200));
+    }
 }
