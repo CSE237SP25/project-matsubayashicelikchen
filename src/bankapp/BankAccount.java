@@ -25,7 +25,7 @@ desired withdrawal amount with ensureValid
 */
 	public void withdraw (double withdrawalAmt) {
 		if (ensureValid(withdrawalAmt)) {
-			this.balance += withdrawalAmt;
+			this.balance = this.balance - withdrawalAmt;
 		}
 	}
 
