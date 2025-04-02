@@ -1,3 +1,5 @@
+package bankapp;
+
 public class SavingsAccount {
 	private static int nextAccountNumber = 1000; // Simulated unique account number generator
 	private int accountNumber;
@@ -11,6 +13,7 @@ public class SavingsAccount {
 		this.userId = userId;
 		this.balance = initialDeposit;
 		this.interestRate = 0.02; // Example: 2% interest
+		FileHandler.updateFile(this.accountNumber, this.userId, this.balance); // Update file with initial deposit
 	}
 
 	// Get account details
