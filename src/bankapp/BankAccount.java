@@ -1,21 +1,28 @@
 package bankapp;
 
+
 public class BankAccount {
     private double balance;
     private double creditBalance;
-
+    private FinancialStatement statement;
     public BankAccount() {
         this.balance = 0;
         this.creditBalance = 0;
+        this.statement = new FinancialStatement();
+        
     }
 
     public void deposit(double amount) {
         if (amount < 0) {
             throw new IllegalArgumentException("Deposit amount cannot be negative");
+        
         }
         this.balance += amount;
+        this.statement.add(amount);
     }
-
+    public FinancialStatement getStatement() {
+    	return this.statement;
+    }
     public double getCurrentBalance() {
         return balance;
     }
@@ -48,6 +55,7 @@ public class BankAccount {
     public void withdraw(double withdrawalAmt) {
         if (ensureValid(withdrawalAmt)) {
             this.balance -= withdrawalAmt;
+            this.statement.minus(withdrawalAmt);
         }
     }
 
