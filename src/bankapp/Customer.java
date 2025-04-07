@@ -10,7 +10,7 @@ public class Customer {
 	private String email;
 	private String phoneNumber;
 	private String address;
-	private BankAccount account;
+	private bankapp.BankAccount account;
 
 	// Constructor if customer has a middle name
 	public Customer(String firstName, String middleName, String lastName, String email, String phoneNumber,
@@ -22,7 +22,7 @@ public class Customer {
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.address = address;
-		this.account = new BankAccount();
+		this.account = new bankapp.BankAccount();
 	}
 	
 	// Constructor if customer has no middle name
@@ -34,7 +34,7 @@ public class Customer {
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.address = address;
-		this.account = new BankAccount();
+		this.account = new bankapp.BankAccount();
 	}
 	
 	public String getFirstName() {
@@ -64,7 +64,7 @@ public class Customer {
 		return address;
 	}
 	
-	public BankAccount getaccount() {
+	public bankapp.BankAccount getaccount() {
 		return account;
 	}
 	
@@ -106,4 +106,7 @@ public class Customer {
 		return address;
 	}
 	*/
+
+	//Note: 1, A bankAccount object is created in this class
+	//
 }

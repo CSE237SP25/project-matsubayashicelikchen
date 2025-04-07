@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Menu {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        BankAccount account = new BankAccount();
+        bankapp.BankAccount account = new bankapp.BankAccount();
         while(true) {
             System.out.println("Select an option:");
             System.out.println("1. Deposit");
