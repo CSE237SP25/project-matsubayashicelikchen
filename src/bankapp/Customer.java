@@ -11,6 +11,7 @@ public class Customer {
 	private String phoneNumber;
 	private String address;
 	private BankAccount account;
+	private SavingsAccount savingsAccount;
 
 	// Constructor if customer has a middle name
 	public Customer(String firstName, String middleName, String lastName, String email, String phoneNumber,
@@ -106,4 +107,41 @@ public class Customer {
 		return address;
 	}
 	*/
+	
+	
+	public SavingsAccount getSavingsAccount() {
+		if (savingsAccount == null) {
+			throw new NoSuchElementException("Customer doesn't have a savings account");
+		}
+		return savingsAccount;
+	}
+	
+	public void openSavingsAccount(double initialDeposit) {
+		if (savingsAccount != null) {
+			throw new IllegalStateException("Customer already has a savings account");
+		}
+		this.savingsAccount = new SavingsAccount(this.hashCode(), initialDeposit);
+	}
+	
+	public void transferToSavings(double amount) {
+		if (savingsAccount == null) {
+			throw new IllegalStateException("No savings account exists");
+		}
+		account.withdraw(amount);
+		savingsAccount.deposit(amount);
+	}
+	
+	public void transferFromSavings(double amount) {
+		if (savingsAccount == null) {
+			throw new IllegalStateException("No savings account exists");
+		}
+		if (savingsAccount.withdraw(amount)) {
+		account.deposit(amount);
+		} else {
+			throw new IllegalArgumentException("Transfer failed - insufficient funds in savings");
+		}
+	}
+	
+	
+	
 }
