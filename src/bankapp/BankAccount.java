@@ -22,11 +22,14 @@ public class BankAccount {
        Removes user-specified amount from balance, validates
        desired withdrawal amount with ensureValid
     */
-    public void withdraw(double withdrawalAmt) {
-        if (ensureValid(withdrawalAmt)) {
-            this.balance -= withdrawalAmt;
+    public boolean withdraw(double amount) {
+        if (ensureValid(amount)) {
+            this.balance -= amount;
+            return true;
         }
+        return false;
     }
+
 
     /*
        Verifies user's withdrawal amount is positive and not

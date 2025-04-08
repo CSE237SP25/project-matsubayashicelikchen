@@ -2,10 +2,10 @@
 
 Team Members:
 
-*
-*
-*
-*
+* Jason Li  
+* Refik Celik
+* Ethan Matsubayashi
+* James Chen
 
 For each iteration you should answer the following:
 
