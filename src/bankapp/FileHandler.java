@@ -26,7 +26,7 @@ public class FileHandler {
     
     //Updates file for each account
     public static void updateFile(int accountNumber, int userId, double balance) {
-        try (FileWriter writer = new FileWriter(FILE_PATH)){
+        try (FileWriter writer = new FileWriter(FILE_PATH)){ //TODO Fix filepath
             String line = String.format("%d, %d, %.2f%n", accountNumber, userId, balance);
             writer.write(line);
         } catch (IOException e) {
