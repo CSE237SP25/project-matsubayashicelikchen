@@ -1,3 +1,5 @@
+package bankapp;
+
 public class SavingsAccount {
 	private static int nextAccountNumber = 1000; // Simulated unique account number generator
 	private int accountNumber;
