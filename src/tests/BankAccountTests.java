@@ -43,7 +43,7 @@ public class BankAccountTests {
 
     @Test
     public void testInitialCreditBalance() {
-        BankAccount account = new BankAccount();
+    	BankAccount credAccount = new BankAccount();
         assertEquals(0, account.getCreditBalance(), 0.001);
     }
 
