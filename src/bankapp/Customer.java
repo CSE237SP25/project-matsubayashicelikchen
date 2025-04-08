@@ -4,6 +4,9 @@ import java.util.NoSuchElementException;
 
 public class Customer {
 
+	private static int nextCustomerID = 1;
+	private int customerID;
+	
 	private String firstName;
 	private String middleName;
 	private String lastName;
@@ -16,6 +19,7 @@ public class Customer {
 	public Customer(String firstName, String middleName, String lastName, String email, String phoneNumber,
 			String address) {
 
+		this.customerID = nextCustomerID++;
 		this.firstName = firstName;
 		this.middleName = middleName;
 		this.lastName = lastName;
@@ -29,12 +33,21 @@ public class Customer {
 	public Customer(String firstName, String lastName, String email, String phoneNumber,
 			String address) {
 
+		this.customerID = nextCustomerID++;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.address = address;
 		this.account = new BankAccount();
+	}
+	
+	public static void setNextCustomerID(int nextID) {
+        nextCustomerID = nextID;
+    }
+	
+	public int getCustomerID() {
+		return customerID;
 	}
 	
 	public String getFirstName() {
@@ -68,42 +81,27 @@ public class Customer {
 		return account;
 	}
 	
-	/* move these into Menu class
-
-	private String initializeFirstName() {
-		System.out.println("Enter your first name: ");
-		String firstName = userInput.nextLine();
-		return firstName;
+	public void changeFirstName(String newFirstName) {
+		this.firstName = newFirstName;
 	}
 	
-	private String initializeMiddleName() {
-		System.out.println("Enter your middle name: ");
-		String middleName = userInput.nextLine();
-		return middleName;
+	public void changeMiddleName(String newMiddleName) {
+		this.middleName = newMiddleName;
 	}
 	
-	private String initializeLastName() {
-		System.out.println("Enter your last name: ");
-		String lastName = userInput.nextLine();
-		return lastName;
+	public void changeLastName(String newLastName) {
+		this.lastName = newLastName;
 	}
 	
-	private String initializeEmail() {
-		System.out.println("Enter your email address: ");
-		String emailAddress = userInput.nextLine();
-		return emailAddress;
+	public void changeEmail(String newEmail) {
+		this.email = newEmail;
 	}
 	
-	private String initializePhoneNumber() {
-		System.out.println("Enter your email address: ");
-		String phoneNumber = userInput.nextLine();
-		return phoneNumber;
+	public void changePhoneNumber(String newPhoneNumber) {
+		this.phoneNumber = newPhoneNumber;
 	}
 	
-	private String initializeAddress() {
-		System.out.println("Enter your email address: ");
-		String address = userInput.nextLine();
-		return address;
+	public void changeAddress(String newAddress) {
+		this.address = newAddress;
 	}
-	*/
 }
