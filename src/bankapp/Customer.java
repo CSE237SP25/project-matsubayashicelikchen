@@ -104,4 +104,5 @@ public class Customer {
 	public void changeAddress(String newAddress) {
 		this.address = newAddress;
 	}
+
 }
