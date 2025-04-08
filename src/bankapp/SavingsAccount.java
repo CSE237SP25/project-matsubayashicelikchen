@@ -15,6 +15,7 @@ public class SavingsAccount {
         this.userId = userId;
         this.balance = initialDeposit;
         this.interestRate = 0.02;
+        // FileHandler.updateFile(this.accountNumber, this.userId, this.balance); // Uncomment if using file persistence
     }
 
     public void deposit(double amount) {
@@ -22,6 +23,7 @@ public class SavingsAccount {
             throw new IllegalArgumentException("Deposit amount must be positive");
         }
         balance += amount;
+        // FileHandler.updateFile(this.accountNumber, this.userId, this.balance); // Uncomment if needed
     }
 
     public boolean withdraw(double amount) {
@@ -32,14 +34,14 @@ public class SavingsAccount {
             return false;
         }
         balance -= amount;
+        // FileHandler.updateFile(this.accountNumber, this.userId, this.balance); // Uncomment if needed
         return true;
     }
-
-    // Removed transfer method since we're handling transfers at Customer level
     
     public void calculateInterest() {
         double interest = balance * interestRate;
         balance += interest;
+        // FileHandler.updateFile(this.accountNumber, this.userId, this.balance); // Uncomment if needed
     }
 
     public int getAccountNumber() { return accountNumber; }
