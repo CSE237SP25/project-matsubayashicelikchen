@@ -12,7 +12,7 @@ public class Menu {
     private static final int DELETE_ACCOUNT = 4;
     private static final int DEPOSIT= 5;
     private static final int WITHDRAW = 6;
-    private static final int LOGOUT = 11;
+    private static final int LOGOUT = 12; 
     private static final int OPEN_CREDIT = 7;
     private static final int OPEN_SAVING = 8;
     private static final int VIEW_CREDIT= 9;
@@ -20,6 +20,7 @@ public class Menu {
     private static final int CREDIT_BORROW = 1;
     private static final int CREDIT_PAY = 2;
     private static final int CREDIT_EXIT = 3;
+	private static final int TRANSFER_FUNDS = 11;
     private Scanner keyboardInput;
     private Customer currentUser;
     private CustomerBase userRepository;
@@ -129,7 +130,7 @@ public class Menu {
     			this.isCredit = false;
     			break;
     		default:
-    			System.out.println("invalid option");
+    			System.out.println("Invalid option");
     	}
     	
     }
@@ -147,7 +148,7 @@ public class Menu {
     		this.isExit = true;
     		break;
     	default:
-    		System.out.println("unreconginize option, try again");
+    		System.out.println("Unrecognized option, try again");
     	}
     	
     }
@@ -185,6 +186,8 @@ public class Menu {
     		case VIEW_CREDIT:
     			this.viewCredit();
     			break;
+			case TRANSFER_FUNDS:
+				this.transferFunds();
     		default:
     			System.out.println("Invalid Option");
     	}
@@ -322,6 +325,28 @@ public class Menu {
         System.out.println("Phone: " + currentUser.getPhone());
     }
 
+	private void transferFunds() {
+		System.out.println("Enter the amount you want to transfer: ");
+		int amount = this.handleOptionInput();
+		if(amount < 0) {
+			System.out.println("Amount can't be negative");
+			return;
+		}
+		if(this.currentUser.getCheckingAccount().getCurrentBalance() < amount) {
+			System.out.println("You don't have enough available funds");
+			return;
+		}
+		System.out.println("Enter the username of the recipient: ");
+		String recipientUsername = this.handleUserInput();
+		if(!this.userRepository.exist(recipientUsername)) {
+			System.out.println("Recipient does not exist");
+			return;
+		}
+		this.currentUser.getCheckingAccount().withdraw(amount);
+		this.userRepository.get(recipientUsername).getCheckingAccount().deposit(amount);
+		System.out.println("Transfer successful");
+	}
+
     public void startPanel() {
     	System.out.println("Welcome to our bank");
     	System.out.println("1. Login");
@@ -341,7 +366,8 @@ public class Menu {
     	System.out.println("8. open a saving account (not finished)");
     	System.out.println("9. view credit(workable but probably have some bug)");
     	System.out.println("10. view saving(not finished)");
-    	System.out.println("11. logout");
+		System.out.println("11. transfer funds"); //altered
+    	System.out.println("12. logout"); //altered
     }
     public void creditPanel() {
     	System.out.println("1. borrow");

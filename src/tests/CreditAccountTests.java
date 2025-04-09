@@ -1,9 +1,8 @@
-package tests;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+ppackage tests;
 
 import bankapp.CreditAccount;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +12,6 @@ public class CreditAccountTests {
 
     @BeforeEach
     public void setUp() {
-        // Initialize CreditAccount before each test
         creditAccount = new CreditAccount();
     }
 
@@ -93,5 +91,33 @@ public class CreditAccountTests {
         creditAccount.borrowCredit(5000);
         Exception exception = assertThrows(IllegalArgumentException.class, () -> creditAccount.borrowCredit(1000));
         assertEquals("Cannot borrow more than the credit limit", exception.getMessage());
+    }
+
+    // Test: Cashback applied after borrowing
+    @Test
+    public void testCashBackAppliedAfterBorrowing() {
+        creditAccount.borrowCredit(1000);
+        assertTrue(creditAccount.getCreditBalance() < 1000, "Cashback should be applied after borrowing.");
+    }
+
+    // Test: Correct cashback amount
+    @Test
+    public void testCashBackAmountCorrectness() {
+        creditAccount.borrowCredit(1000);
+        double expectedBalanceAfterCashBack = 1000 - 10; // Assuming 1% cashback
+        assertEquals(expectedBalanceAfterCashBack, creditAccount.getCreditBalance(), "Credit balance after cashback should be correct.");
+    }
+
+    // Test: Negative borrow amount throws error
+    @Test
+    public void testCashBackDoesNotGoNegative() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> creditAccount.borrowCredit(-100));
+        assertEquals("Borrow amount cannot be negative", exception.getMessage());
+    }
+
+    // Test: Cashback before any borrowing
+    @Test
+    public void testCashBackWhenNoBorrowing() {
+        assertEquals(0, creditAccount.getCreditBalance(), "Credit balance should be zero if no credit is borrowed.");
     }
 }
