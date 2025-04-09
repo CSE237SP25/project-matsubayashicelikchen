@@ -72,28 +72,26 @@ N/A
 
 In this iteration, our team further enhanced and extended the foundation of our banking system by refining several key components and beginning integration between modules. Each team member continued to focus on specific areas, ensuring progress toward a more comprehensive system.
 
-Jason Li and Refik Celik collaboratively advanced the integration between customer information and account management. Their efforts in Figure 1 demonstrate improvements in how customer profiles interact with account functionalities, setting the stage for smoother operations across various account types.
+Jason and Refik collaboratively advanced the integration between customer information and account management. Their joint efforts improved how customer profiles interact with account functionalities, setting the stage for smoother operations across various account types.
 
-Refik Celik further contributed in Figure 2 by focusing on improving the savings account functionality and reinforcing the personal information handling process. His work continues to refine the methods by which users can open and manage savings accounts, even though this module is not entirely complete yet.
+Refik further contributed by working on the savings account functionality and reinforcing personal information handling. His work continues to refine the methods by which users can open and manage savings accounts, even though this module is not yet entirely complete.
 
-Ethan Matsubayashi built upon his previous work by enhancing the core transaction functionalities. In Figure 3, he refined the deposit and withdrawal operations and ensured that each transaction is logged accurately using our file-based persistence mechanism. This improvement lays the groundwork for more robust transaction tracking.
+Ethan built upon his previous work by enhancing core transaction functionalities. He refined the deposit and withdrawal operations and ensured that every transaction is logged accurately using a file-based persistence mechanism. This improvement lays the groundwork for more robust transaction tracking.
 
-James Chen continued his efforts on overall bank account management and secure fund transfers, as illustrated in Figure 5. His work further improved the validations and consistency of transaction processing, which is critical for maintaining account integrity and reliability.
+James continued his efforts on overall bank account management and secure fund transfers. His work further improved validations and consistency in transaction processing, which is critical for maintaining account integrity and reliability.
 
 Together, our team’s efforts in this iteration have extended the groundwork from Iteration 1, moving us closer to a fully integrated and secure banking system.
-
-
 
 ##### Completed User Stories:
 
 - **Enhanced Customer and Account Integration:**
-   Jason Li and Refik Celik jointly improved the connection between customer profiles and account data, enabling more seamless management of personal information and account functionalities.
+   Jason and Refik jointly improved the connection between customer profiles and account data, enabling more seamless management of personal information and account functionalities.
 - **Improved Transaction Logging:**
-   Ethan Matsubayashi refined the core deposit and withdrawal processes, ensuring that every transaction is logged persistently and accurately for later retrieval.
+   Ethan refined the core deposit and withdrawal processes, ensuring that every transaction is logged persistently and accurately for later retrieval.
 - **Advanced Credit Operations:**
    Credit management functions—including borrowing and repaying credit—have been further stabilized, ensuring that users can manage unexpected expenses with improved error handling.
 - **Secure Fund Transfer Enhancements:**
-   James Chen contributed crucial validations and processing improvements, ensuring that fund transfers and transaction operations maintain robust security standards.
+   James contributed crucial validations and processing improvements, ensuring that fund transfers and transaction operations maintain robust security standards.
 
 
 
@@ -115,6 +113,8 @@ Together, our team’s efforts in this iteration have extended the groundwork fr
 ##### Not Currently Working Functions:
 
 - **Savings Account Functionality:**
-   While users can currently trigger the opening of a savings account, the complete integration and full feature set for savings accounts are not yet fully operational.
-- **Bank Account Checking and Menu Integration:**
-   Basic operations for the bank account and checking account are functional. However, the seamless synchronization between these modules and the menu interface requires further work. Integration issues remain in ensuring that all updates to account balances are accurately reflected in the user interface.
+   While users can trigger the opening of a savings account, the complete integration and full feature set for savings accounts are not yet fully operational.
+- **Bank Account and Checking Account Menu Integration:**
+   Basic operations such as deposits, withdrawals, and balance displays are functional. However, the seamless synchronization between these account modules and the menu system requires further refinement to ensure that all updates are accurately reflected in the user interface.
+- **Database Connection to Account Modules:**
+   The system’s database integration—which should connect and synchronize data for the various account types—is not yet working. Further development is required to establish a reliable connection between our data repository and the account modules, ensuring that account data (including transactions and balances) is properly maintained across the system.
