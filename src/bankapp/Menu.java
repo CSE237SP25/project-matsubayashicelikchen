@@ -179,9 +179,9 @@ public class Menu {
     		case OPEN_CREDIT:
     			this.openCredit();
     			break;
-    		case OPEN_SAVING:
-    			this.openSaving();
-    			break;
+    		//case OPEN_SAVING:
+    			//this.openSaving();
+    			//break;
     		case VIEW_CREDIT:
     			this.viewCredit();
     			break;
@@ -338,9 +338,9 @@ public class Menu {
     	System.out.println("5. deposit");
     	System.out.println("6. withdraw");
     	System.out.println("7. open a credit account");
-    	System.out.println("8. open a saving account");
+    	System.out.println("8. open a saving account (not finished)");
     	System.out.println("9. view credit(workable but probably have some bug)");
-    	System.out.println("10. view saving(not finish)");
+    	System.out.println("10. view saving(not finished)");
     	System.out.println("11. logout");
     }
     public void creditPanel() {
