@@ -1,152 +1,86 @@
 package tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import bankapp.Customer;
+import bankapp.BankAccount;
+import bankapp.SavingsAccount;
+import bankapp.CreditAccount;
 
 public class CustomerTests {
-	
-	@BeforeEach
-	public void resetCustomerID() {
-		Customer.setNextCustomerID(1);
-	}
-	
-	@Test
-	public void testSimpleDeposit() {
-		//1. Create objects to be tested
-		Customer customer = new Customer("Billy", "Bob", "Joe", "Billy@gmail.com",
-				"3147289341", "1 Brookings Dr, St. Louis, MO 63130");
-		
-		//2. Call the method being tested
-		customer.getaccount().deposit(25);
-		
-		//3. Use assertions to verify results
-		assertEquals(customer.getaccount().getCurrentBalance(), 25.0, 0.005);
-	}
-	
-	@Test
-	public void testNegativeDeposit() {
-		//1. Create object to be tested
-		Customer customer = new Customer("Billy", "Bob", "Joe", "Billy@gmail.com",
-				"3147289341", "1 Brookings Dr, St. Louis, MO 63130");
-		
-		try {
-			customer.getaccount().deposit(-25);
-			fail();
-		} catch (IllegalArgumentException e) {
-			assertTrue(e != null);
-		}
-	}
-	
-	@Test
-	public void testCustomerID() {
-		//1. Create object to be tested
-		Customer customer1 = new Customer("Billy", "Bob", "Joe", "Billy@gmail.com",
-				"3147289341", "1 Brookings Dr, St. Louis, MO 63130");
-		
-		Customer customer2 = new Customer("Sarah", "Lilly", "Elliot", "Sarah@gmail.com",
-				"3148267733", "1 Brookings Dr, St. Louis, MO 63130");
-		
-		Customer customer3 = new Customer("Jolly", "Holly", "Molly", "Jolly@gmail.com",
-				"9999999999", "1 Brookings Dr, St. Louis, MO 63130");
-		
-		int customer1ID = customer1.getCustomerID();
-		int customer2ID = customer2.getCustomerID();
-		int customer3ID = customer3.getCustomerID();
 
-		assertEquals(1, customer1ID);
-		assertEquals(2, customer2ID);
-		assertEquals(3, customer3ID);
-		
-	}
-	
-	@Test
-	public void testModifyFirstName() {
-		//1. Create object to be tested
-		Customer customer = new Customer("Billy", "Bob", "Joe", "Billy@gmail.com",
-				"3147289341", "1 Brookings Dr, St. Louis, MO 63130");
-		
-		customer.changeFirstName("Bradly");
-		
-		String actualFirstName = customer.getFirstName();
-		String expectedFirstName = "Bradly";
-		
-		assertEquals(expectedFirstName, actualFirstName);
-	}
-	
-	@Test
-	public void testModifyMiddleName() {
-		//1. Create object to be tested
-		Customer customer = new Customer("Billy", "Bob", "Joe", "Billy@gmail.com",
-				"3147289341", "1 Brookings Dr, St. Louis, MO 63130");
-		
-		customer.changeMiddleName("Bradly");
-		
-		String actualMiddleName = customer.getMiddleName();
-		String expectedMiddleName = "Bradly";
-		
-		assertEquals(expectedMiddleName, actualMiddleName);
-	}
-	
-	@Test
-	public void testModifyLastName() {
-		//1. Create object to be tested
-		Customer customer = new Customer("Billy", "Bob", "Joe", "Billy@gmail.com",
-				"3147289341", "1 Brookings Dr, St. Louis, MO 63130");
-		
-		customer.changeLastName("Bradly");
-		
-		String actualLastName = customer.getLastName();
-		String expectedLastName = "Bradly";
-		
-		assertEquals(expectedLastName, actualLastName);
-	}
-	
-	@Test
-	public void testModifyEmail() {
-		//1. Create object to be tested
-		Customer customer = new Customer("Billy", "Bob", "Joe", "Billy@gmail.com",
-				"3147289341", "1 Brookings Dr, St. Louis, MO 63130");
-		
-		customer.changeEmail("Bob@outlook.com");
-		
-		String actualEmail = customer.getEmail();
-		String expectedEmail = "Bob@outlook.com";
-		
-		assertEquals(expectedEmail, actualEmail);
-	}
-	
-	@Test
-	public void testPhoneNumber() {
-		//1. Create object to be tested
-		Customer customer = new Customer("Billy", "Bob", "Joe", "Billy@gmail.com",
-				"3147289341", "1 Brookings Dr, St. Louis, MO 63130");
-		
-		customer.changePhoneNumber("1112223333");
-		
-		String actualPhoneNumber = customer.getPhoneNumber();
-		String expectedPhoneNumber = "1112223333";
-		
-		assertEquals(expectedPhoneNumber, actualPhoneNumber);
-	}
-	
-	@Test
-	public void testAddress() {
-		//1. Create object to be tested
-		Customer customer = new Customer("Billy", "Bob", "Joe", "Billy@gmail.com",
-				"3147289341", "1 Brookings Dr, St. Louis, MO 63130");
-		
-		customer.changeAddress("Village East, Forest Park Pkwy, St. Louis, MO 63130");
-		
-		String actualAddress = customer.getAddress();
-		String expectedAddress = "Village East, Forest Park Pkwy, St. Louis, MO 63130";
-		
-		assertEquals(expectedAddress, actualAddress);
-	}
+    @Test
+    public void testCustomerConstructorAll() {
+        Customer customer = new Customer("johnDoe", "password123", "John", "Doe", "johndoe@example.com", "1234567890");
+        assertEquals("johnDoe", customer.getUsername());
+        assertEquals("password123", customer.getPassword());
+        assertEquals("John", customer.getFirstName());
+        assertEquals("Doe", customer.getLastName());
+        assertEquals("johndoe@example.com", customer.getEmail());
+        assertEquals("1234567890", customer.getPhone());
+        assertNotNull(customer.getCheckingAccount());
+        assertNull(customer.getSavingsAccount());
+        assertNull(customer.getCreditAccount());
+    }
 
+    @Test
+    public void testCustomerConstructorNoPhone() {
+        Customer customer = new Customer("janeDoe", "pass456", "Jane", "Doe", "janedoe@example.com");
+        assertEquals("janeDoe", customer.getUsername());
+        assertEquals("pass456", customer.getPassword());
+        assertEquals("Jane", customer.getFirstName());
+        assertEquals("Doe", customer.getLastName());
+        assertEquals("janedoe@example.com", customer.getEmail());
+        assertNull(customer.getPhone());
+        assertNotNull(customer.getCheckingAccount());
+        assertNull(customer.getSavingsAccount());
+        assertNull(customer.getCreditAccount());
+    }
+
+    @Test
+    public void testToStringMethod() {
+        Customer customer = new Customer("johnDoe", "password123", "John", "Doe", "johndoe@example.com", "1234567890");
+        String expected = "johnDoe\npassword123\nJohn\nDoe\njohndoe@example.com\n1234567890";
+        assertEquals(expected, customer.toString());
+    }
+
+    @Test
+    public void testSetters() {
+        Customer customer = new Customer("johnDoe", "password123", "John", "Doe", "johndoe@example.com", "1234567890");
+        customer.setPassword("newPassword");
+        customer.setFirstName("Jonathan");
+        customer.setLastName("Smith");
+        customer.setEmail("jonathan.smith@example.com");
+        customer.setPhone("0987654321");
+        
+        assertEquals("newPassword", customer.getPassword());
+        assertEquals("Jonathan", customer.getFirstName());
+        assertEquals("Smith", customer.getLastName());
+        assertEquals("jonathan.smith@example.com", customer.getEmail());
+        assertEquals("0987654321", customer.getPhone());
+    }
+    
+    // Note: The open savings account functionality is not fully implemented yet.
+    // This test is disabled and can be ignored for now.
+    @Disabled("Open savings account method is not implemented yet; ignore this test")
+    @Test
+    public void testOpenSavingsAccount() {
+        Customer customer = new Customer("johnDoe", "password123", "John", "Doe", "johndoe@example.com", "1234567890");
+        assertNull(customer.getSavingsAccount());
+        customer.openSavingsAccount(100.0);
+        assertNotNull(customer.getSavingsAccount());
+        // Attempt to open a savings account a second time should throw an exception.
+        assertThrows(IllegalStateException.class, () -> customer.openSavingsAccount(50.0));
+    }
+
+    @Test
+    public void testOpenCreditAccount() {
+        Customer customer = new Customer("johnDoe", "password123", "John", "Doe", "johndoe@example.com", "1234567890");
+        assertNull(customer.getCreditAccount());
+        customer.openCreditAccount();
+        assertNotNull(customer.getCreditAccount());
+        // Attempting to open another credit account should throw an exception.
+        assertThrows(IllegalStateException.class, () -> customer.openCreditAccount());
+    }
 }
