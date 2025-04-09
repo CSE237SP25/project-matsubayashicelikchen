@@ -110,7 +110,7 @@ public class Customer {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-
+    
     /**
      * Opens a savings account for the customer with an initial deposit.
      * If a savings account already exists, it will throw an IllegalStateException.
