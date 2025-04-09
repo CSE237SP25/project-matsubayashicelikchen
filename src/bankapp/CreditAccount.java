@@ -1,10 +1,13 @@
 package bankapp;
 
 public class CreditAccount {
+	public static final int MAX_CREDIT_SCORE = 850;
     private double creditBalance;
+    private int creditScore;
 
     public CreditAccount() {
         this.creditBalance = 0;
+        this.creditScore = 700;
     }
 
     public double getCreditBalance() {
@@ -26,5 +29,17 @@ public class CreditAccount {
             throw new IllegalArgumentException("Cannot repay more than the current credit balance");
         }
         this.creditBalance -= amount;
+        
+     // Increase credit score only if it's less than MAX_CREDIT_SCORE
+        if(this.creditScore < MAX_CREDIT_SCORE) {
+            this.creditScore += 1; 
+        }
+    }
+    
+    public int getCreditScore() {
+        return creditScore;
     }
 }
+
+
+
