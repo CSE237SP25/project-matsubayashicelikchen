@@ -66,13 +66,13 @@ public class Menu {
     	}
     }
     public void login() {
-    	System.out.println("input your username or input q to quit");
+    	System.out.println("Enter your username or input q to quit");
     	String input = this.handleUserInput();
     	if(input.equals("q")) {
     		return;
     	}
     	String username = input;
-    	System.out.println("input your password");
+    	System.out.println("Enter your password");
     	input = this.handleUserInput();
     	String password = input;
     	if(!this.userRepository.exist(username)) {
@@ -203,7 +203,7 @@ public class Menu {
     	System.out.println("Enter the amount you want to pay");
     	int amount = this.handleOptionInput();
     	if(amount > this.currentUser.getCreditAccount().getCreditBalance()) {
-    		System.out.println("you can't pay exceed the balance");
+    		System.out.println("You can't pay an amount that exceeds your balance");
     		return;
     	}
     	this.currentUser.getCreditAccount().repayCredit(amount);
@@ -211,26 +211,26 @@ public class Menu {
     }
     private void viewCredit() {
     	if(this.currentUser.getCreditAccount()== null) {
-    		System.out.println("You dont have credit account");
+    		System.out.println("You don't have a credit account");
     		return;
     	}
     	this.isCredit = true;
     }
     private void openCredit() {
     	this.currentUser.openCreditAccount();
-    	System.out.println("finsih oepn credit Account");
+    	System.out.println("Credit account opened successfully");
     }
     private void openSaving() {
-    	System.out.println("Enter you initial deposit");
+    	System.out.println("Enter your initial deposit");
     	int amount = this.handleOptionInput();
     	this.currentUser.openSavingsAccount(amount);
-    	System.out.println("finish oepn saving account");
+    	System.out.println("finish open saving account");
     }
     private void withdraw() {
     	System.out.println("Enter the number you want to WITHDRAW");
     	int amount = this.handleOptionInput();
     	if(amount > this.currentUser.getCheckingAccount().getCurrentBalance()) {
-    		System.out.println("the amount should not larger than you balance");
+    		System.out.println("The amount should not be larger than your balance");
     		return;
     	}
     	this.currentUser.getCheckingAccount().withdraw(amount);
@@ -239,7 +239,7 @@ public class Menu {
     	System.out.println("Your current Balance is "+this.currentUser.getCheckingAccount().getCurrentBalance());
     }
     private void deposit() {
-    	System.out.println("Enter the amoutn you want to deposit");
+    	System.out.println("Enter the amount you want to deposit");
     	int amount = this.handleOptionInput();
     	if(amount < 0) {
     		System.out.println("amount can't be negative");
@@ -338,7 +338,7 @@ public class Menu {
     	System.out.println("5. deposit");
     	System.out.println("6. withdraw");
     	System.out.println("7. open a credit account");
-    	System.out.println("8. oepn a saving account");
+    	System.out.println("8. open a saving account");
     	System.out.println("9. view credit(workable but probably have some bug)");
     	System.out.println("10. view saving(not finish)");
     	System.out.println("11. logout");
