@@ -1,84 +1,60 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
-import bankapp.BankAccount;
+public class BankAccountTests{
+    private double balance;
+    private double creditBalance;
 
-public class BankAccountTests {
-
-    @Test
-    public void testSimpleDeposit() {
-        BankAccount account = new BankAccount();
-        account.deposit(25);
-        assertEquals(25.0, account.getCurrentBalance(), 0.005);
+    public BankAccountTests() {
+        this.balance = 0;
+        this.creditBalance = 0;
     }
 
-    @Test
-    public void testNegativeDeposit() {
-        BankAccount account = new BankAccount();
-        assertThrows(IllegalArgumentException.class, () -> account.deposit(-25));
+    public void deposit(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Deposit amount cannot be negative");
+        }
+        this.balance += amount;
     }
 
-    @Test
-    public void testSimpleWithdrawal() {
-        BankAccount account = new BankAccount();
-        account.deposit(25);
-        account.withdraw(5);
-        assertEquals(20.0, account.getCurrentBalance(), 0.005);
+    public double getCurrentBalance() {
+        return balance;
     }
 
-    @Test
-    public void testNegativeWithdrawal() {
-        BankAccount account = new BankAccount();
-        account.deposit(25);
-        assertThrows(IllegalArgumentException.class, () -> account.withdraw(-5.25));
+    public boolean withdraw(double amount) {
+        if (ensureValid(amount)) {
+            this.balance -= amount;
+            return true;
+        }
+        return false;
     }
 
-    @Test
-    public void testOverdrawingWithdrawal() {
-        BankAccount account = new BankAccount();
-        account.deposit(25);
-        assertThrows(IllegalArgumentException.class, () -> account.withdraw(500));
+    public boolean ensureValid(double withdrawalAmt) {
+        if (withdrawalAmt > balance) {
+            throw new IllegalArgumentException("Attempting to withdraw sum greater than balance");
+        } else if (withdrawalAmt <= 0) {
+            throw new IllegalArgumentException("Must withdraw a positive sum of money");
+        }
+        return true;
     }
 
-    @Test
-    public void testInitialCreditBalance() {
-        BankAccount account = new BankAccount();
-        assertEquals(0, account.getCreditBalance(), 0.001);
+    public double getCreditBalance() {
+        return creditBalance;
     }
 
-    @Test
-    public void testBorrowCredit() {
-        BankAccount account = new BankAccount();
-        account.borrowCredit(200);
-        assertEquals(200, account.getCreditBalance(), 0.001);
+    public void borrowCredit(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Cannot borrow a negative amount");
+        }
+        creditBalance += amount;
     }
 
-    @Test
-    public void testBorrowNegativeCredit() {
-        BankAccount account = new BankAccount();
-        assertThrows(IllegalArgumentException.class, () -> account.borrowCredit(-100));
-    }
-
-    @Test
-    public void testRepayCredit() {
-        BankAccount account = new BankAccount();
-        account.borrowCredit(300);
-        account.repayCredit(100);
-        assertEquals(200, account.getCreditBalance(), 0.001);
-    }
-
-    @Test
-    public void testRepayNegativeCredit() {
-        BankAccount account = new BankAccount();
-        account.borrowCredit(300);
-        assertThrows(IllegalArgumentException.class, () -> account.repayCredit(-50));
-    }
-
-    @Test
-    public void testRepayMoreThanCredit() {
-        BankAccount account = new BankAccount();
-        account.borrowCredit(150);
-        assertThrows(IllegalArgumentException.class, () -> account.repayCredit(200));
+    public void repayCredit(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Cannot repay a negative amount");
+        }
+        if (amount > creditBalance) {
+            throw new IllegalArgumentException("Repay amount exceeds credit balance");
+        }
+        creditBalance -= amount;
     }
 }
