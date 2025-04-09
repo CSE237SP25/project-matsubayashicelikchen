@@ -179,9 +179,9 @@ public class Menu {
     		case OPEN_CREDIT:
     			this.openCredit();
     			break;
-    		case OPEN_SAVING:
-    			this.openSaving();
-    			break;
+    		//case OPEN_SAVING:
+    			//this.openSaving();
+    			//break;
     		case VIEW_CREDIT:
     			this.viewCredit();
     			break;
