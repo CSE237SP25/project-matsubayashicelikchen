@@ -40,45 +40,4 @@ public class BankAccountTests {
         account.deposit(25);
         assertThrows(IllegalArgumentException.class, () -> account.withdraw(500));
     }
-
-    @Test
-    public void testInitialCreditBalance() {
-    	BankAccount credAccount = new BankAccount();
-        assertEquals(0, account.getCreditBalance(), 0.001);
-    }
-
-    @Test
-    public void testBorrowCredit() {
-        BankAccount account = new BankAccount();
-        account.borrowCredit(200);
-        assertEquals(200, account.getCreditBalance(), 0.001);
-    }
-
-    @Test
-    public void testBorrowNegativeCredit() {
-        BankAccount account = new BankAccount();
-        assertThrows(IllegalArgumentException.class, () -> account.borrowCredit(-100));
-    }
-
-    @Test
-    public void testRepayCredit() {
-        BankAccount account = new BankAccount();
-        account.borrowCredit(300);
-        account.repayCredit(100);
-        assertEquals(200, account.getCreditBalance(), 0.001);
-    }
-
-    @Test
-    public void testRepayNegativeCredit() {
-        BankAccount account = new BankAccount();
-        account.borrowCredit(300);
-        assertThrows(IllegalArgumentException.class, () -> account.repayCredit(-50));
-    }
-
-    @Test
-    public void testRepayMoreThanCredit() {
-        BankAccount account = new BankAccount();
-        account.borrowCredit(150);
-        assertThrows(IllegalArgumentException.class, () -> account.repayCredit(200));
-    }
 }

@@ -41,6 +41,8 @@ public class SavingsAccount {
         balance += amount;
         System.out.printf("Deposited $%.2f. New Balance: $%.2f%n", amount, balance);
     }
+    
+
 
     public boolean withdraw(double amount) {
         validatePositiveAmount(amount, "Withdrawal");

@@ -9,11 +9,32 @@ public class SavingsAccountTests {
 
     @Test
     public void testOpenSavingsAccount() {
-        // Create a savings account with an initial deposit of $500
+        // Test default constructor (2% interest)
         SavingsAccount account = new SavingsAccount(101, 500.0);
-
-        // Verify initial balance
         assertEquals(500.0, account.getBalance(), 0.005);
+        assertEquals(0.02, account.getInterestRate(), 0.001);
+    }
+
+    @Test
+    public void testOpenSavingsAccountWithCustomInterest() {
+        // Test custom interest rate (5%)
+        SavingsAccount account = new SavingsAccount(101, 1000.0, 0.05);
+        assertEquals(1000.0, account.getBalance(), 0.005);
+        assertEquals(0.05, account.getInterestRate(), 0.001);
+    }
+
+    @Test
+    public void testNegativeInitialDeposit() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SavingsAccount(101, -100.0);
+        });
+    }
+
+    @Test
+    public void testInvalidInterestRate() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SavingsAccount(101, 100.0, 0.0); // 0% interest not allowed
+        });
     }
 
     @Test
@@ -42,15 +63,15 @@ public class SavingsAccountTests {
     @Test
     public void testWithdrawInsufficientFunds() {
         SavingsAccount account = new SavingsAccount(101, 50.0);
-        assertFalse(account.withdraw(100.0)); // Should fail
+        assertFalse(account.withdraw(100.0));
         assertEquals(50.0, account.getBalance(), 0.005);
     }
 
     @Test
-    public void testCalculateInterest() {
+    public void testApplyInterest() {  // Renamed from testCalculateInterest
         SavingsAccount account = new SavingsAccount(101, 1000.0);
-        account.calculateInterest();
-        assertEquals(1020.0, account.getBalance(), 0.005); // Assuming 2% interest
+        account.applyInterest();  // Changed from calculateInterest()
+        assertEquals(1020.0, account.getBalance(), 0.005); // 2% of 1000 = 20
     }
 
     @Test
@@ -61,4 +82,6 @@ public class SavingsAccountTests {
         });
         assertEquals("Withdrawal amount must be positive", exception.getMessage());
     }
+
+ 
 }

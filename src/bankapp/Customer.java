@@ -62,9 +62,18 @@ public class Customer {
         if (savingsAccount == null) {
             throw new IllegalStateException("No savings account exists");
         }
-        account.withdraw(amount);
-        savingsAccount.deposit(amount);
+
+  
+
+        // Withdraw from checking and deposit into savings
+        account.withdraw(amount); // Withdraw from checking
+ 
+
+        savingsAccount.deposit(amount); // Deposit into savings
+     
     }
+
+
 
     
 
@@ -77,6 +86,14 @@ public class Customer {
         } else {
             throw new IllegalArgumentException("Transfer failed - insufficient funds in savings");
         }
+    }
+    
+ // Check Credit Score for eligibility
+    public boolean isEligibleForLoan(int minimumCreditScore) {
+        if (creditAccount == null) {
+            throw new NoSuchElementException("Customer doesn't have a credit account");
+        }
+        return creditAccount.getCreditScore() >= minimumCreditScore;
     }
 
     // Getters
@@ -104,6 +121,14 @@ public class Customer {
     public boolean authenticate(String password) {
         return this.password.equals(password);
     }
+    
+ // Get Credit Score
+    public int getCreditScore() {
+        if (creditAccount == null) {
+            throw new NoSuchElementException("Customer doesn't have a credit account");
+        }
+        return creditAccount.getCreditScore();
+    }
 
     // Setters
     public void changeFirstName(String newFirstName) { this.firstName = newFirstName; }
@@ -113,6 +138,13 @@ public class Customer {
     public void changePhoneNumber(String newPhoneNumber) { this.phoneNumber = newPhoneNumber; }
     public void changeAddress(String newAddress) { this.address = newAddress; }
     public static void setNextCustomerID(int nextID) { nextCustomerID = nextID; }
+    
+    public void updateCreditScore(int newScore) {
+        if (creditAccount == null) {
+            throw new NoSuchElementException("Customer doesn't have a credit account");
+        }
+        creditAccount.updateCreditScore(newScore);  // Assumes you add a setter in CreditAccount
+    }
 
     @Override
     public String toString() {

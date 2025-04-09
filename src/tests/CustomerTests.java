@@ -1,13 +1,14 @@
 package tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import bankapp.Customer;
+
+
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class CustomerTests {
 	
@@ -23,10 +24,10 @@ public class CustomerTests {
 				"3147289341", "1 Brookings Dr, St. Louis, MO 63130");
 		
 		//2. Call the method being tested
-		customer.getaccount().deposit(25);
+		customer.getAccount().deposit(25);
 		
 		//3. Use assertions to verify results
-		assertEquals(customer.getaccount().getCurrentBalance(), 25.0, 0.005);
+		assertEquals(customer.getAccount().getCurrentBalance(), 25.0, 0.005);
 	}
 	
 	@Test
@@ -36,7 +37,7 @@ public class CustomerTests {
 				"3147289341", "1 Brookings Dr, St. Louis, MO 63130");
 		
 		try {
-			customer.getaccount().deposit(-25);
+			customer.getAccount().deposit(-25);
 			fail();
 		} catch (IllegalArgumentException e) {
 			assertTrue(e != null);
@@ -148,5 +149,102 @@ public class CustomerTests {
 		
 		assertEquals(expectedAddress, actualAddress);
 	}
+	
+	@Test
+    public void testOpenCreditAccount() {
+        Customer customer = new Customer("John", "Doe", "john.doe@example.com", "1234567890", "123 Main St", "password123");
+        customer.openCreditAccount();
+        assertNotNull(customer.getCreditAccount(), "Credit account should be opened.");
+    }
+
+    @Test
+    public void testGetCreditScore() {
+        Customer customer = new Customer("John", "Doe", "john.doe@example.com", "1234567890", "123 Main St", "password123");
+        customer.openCreditAccount();
+        assertEquals(700, customer.getCreditScore(), "The default credit score should be 0.");
+    }
+
+    @Test
+    public void testUpdateCreditScore() {
+        Customer customer = new Customer("John", "Doe", "john.doe@example.com", "1234567890", "123 Main St", "password123");
+        customer.openCreditAccount();
+        customer.updateCreditScore(750);
+        assertEquals(750, customer.getCreditScore(), "The credit score should be updated to 750.");
+    }
+    
+    @Test
+    public void testIsEligibleForLoan() {
+        Customer customer = new Customer("John", "Doe", "john.doe@example.com", "1234567890", "123 Main St", "password123");
+        customer.openCreditAccount();
+        customer.updateCreditScore(750);
+        assertTrue(customer.isEligibleForLoan(700), "Customer should be eligible for loan with a credit score of 750.");
+        assertFalse(customer.isEligibleForLoan(800), "Customer should not be eligible for loan with a credit score of 750.");
+    }
+
+    @Test
+    public void testOpenSavingsAccount() {
+        Customer customer = new Customer("Jane", "Doe", "jane.doe@example.com", "0987654321", "456 Elm St", "password456");
+        customer.openSavingsAccount(100.0);
+        assertNotNull(customer.getSavingsAccount(), "Savings account should be opened.");
+    }
+
+   
+    
+    @Test
+    public void testTransferToSavings() {
+        Customer customer = new Customer("Jane", "Doe", "jane.doe@example.com", "0987654321", "456 Elm St", "password456");
+        customer.openSavingsAccount(100.0);
+        
+        customer.getAccount().deposit(200.0);
+        customer.transferToSavings(150.0);
+
+        assertEquals(250.0, customer.getSavingsAccount().getBalance(), "Savings account balance should be 150 after transfer.");
+    }
+
+
+    @Test
+    public void testTransferFromSavings() {
+        Customer customer = new Customer("Jane", "Doe", "jane.doe@example.com", "0987654321", "456 Elm St", "password456");
+        customer.openSavingsAccount(100.0);
+        customer.getAccount().deposit(200.0);
+        customer.transferToSavings(150.0);
+        customer.transferFromSavings(50.0);
+        assertEquals(100.0, customer.getAccount().getCurrentBalance(), "Account balance should be 100 after transferring from savings.");
+    }
+
+    @Test
+    public void testAuthenticate() {
+        Customer customer = new Customer("John", "Doe", "john.doe@example.com", "1234567890", "123 Main St", "password123");
+        assertTrue(customer.authenticate("password123"), "Authentication should pass with correct password.");
+        assertFalse(customer.authenticate("wrongpassword"), "Authentication should fail with incorrect password.");
+    }
+
+    @Test
+    public void testChangeCustomerDetails() {
+        Customer customer = new Customer("John", "Doe", "john.doe@example.com", "1234567890", "123 Main St", "password123");
+        customer.changeFirstName("Jonathan");
+        customer.changeLastName("Smith");
+        customer.changeEmail("jonathan.smith@example.com");
+        customer.changePhoneNumber("0987654321");
+        customer.changeAddress("789 Oak St");
+
+        assertEquals("Jonathan", customer.getFirstName(), "First name should be updated.");
+        assertEquals("Smith", customer.getLastName(), "Last name should be updated.");
+        assertEquals("jonathan.smith@example.com", customer.getEmail(), "Email should be updated.");
+        assertEquals("0987654321", customer.getPhoneNumber(), "Phone number should be updated.");
+        assertEquals("789 Oak St", customer.getAddress(), "Address should be updated.");
+    }
+
+    @Test
+    public void testOpenMultipleAccounts() {
+        Customer customer = new Customer("John", "Doe", "john.doe@example.com", "1234567890", "123 Main St", "password123");
+        customer.openCreditAccount();
+        customer.openSavingsAccount(500.0);
+
+        assertNotNull(customer.getCreditAccount(), "Credit account should be opened.");
+        assertNotNull(customer.getSavingsAccount(), "Savings account should be opened.");
+    }
+	
+	
 
 }
