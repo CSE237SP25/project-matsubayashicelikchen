@@ -1,16 +1,19 @@
 package bankapp;
 
 public class CreditAccount {
+    public static final int MAX_CREDIT_SCORE = 850;
     private double creditBalance;
     private int cashBack; 
     private double cashBackRate;
     private double creditLimit;
-
-    public CreditAccount() {
+    private int creditScore;
+  
+   public CreditAccount() {
         this.creditBalance = 0;
         this.cashBack = 0;
         this.cashBackRate = 0.01; 
         this.creditLimit = 5000;
+        this.creditScore = 700;
     }
   
     public void setCreditLimit(double creditLimit) {
@@ -29,7 +32,12 @@ public class CreditAccount {
         }
         this.creditBalance -= amount;
         cashBack += amount * cashBackRate;
-        creditBalance -= cashBack; //cashBack is automatically applied. 
+        creditBalance -= cashBack; //cashBack is automatically applied.
+      
+        // Increase credit score only if it's less than MAX_CREDIT_SCORE
+        if(this.creditScore < MAX_CREDIT_SCORE) {
+            this.creditScore += 1; 
+        }
     }
 
     public void borrowCredit(double amount) {
@@ -58,6 +66,8 @@ public class CreditAccount {
     public double getCreditLimit() {
         return creditLimit;
     }
-    
+  
+   public int getCreditScore() {
+        return creditScore;
+    }   
 }
-

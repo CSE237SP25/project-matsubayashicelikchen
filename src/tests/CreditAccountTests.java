@@ -1,13 +1,11 @@
-ppackage tests;
+package tests;
 
 import bankapp.CreditAccount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CreditAccountTests {
-
     private CreditAccount creditAccount;
 
     @BeforeEach
@@ -15,41 +13,44 @@ public class CreditAccountTests {
         creditAccount = new CreditAccount();
     }
 
-    // Test for default credit balance
     @Test
-    public void testDefaultCreditBalance() {
-        assertEquals(0, creditAccount.getCreditBalance(), "Initial credit balance should be 0");
+    public void testInitialCreditBalance() {
+        assertEquals(0.0, creditAccount.getCreditBalance(), "Initial credit balance should be 0");
     }
 
-    // Test for default credit limit
     @Test
     public void testDefaultCreditLimit() {
         assertEquals(5000, creditAccount.getCreditLimit(), "Default credit limit should be 5000");
     }
 
-    // Test for borrowing credit
     @Test
     public void testBorrowCredit() {
         creditAccount.borrowCredit(500);
-        assertEquals(500, creditAccount.getCreditBalance(), "Credit balance should be 500 after borrowing 500");
+        assertEquals(500.0, creditAccount.getCreditBalance(), "Credit balance should be updated to 500");
+
+        assertThrows(IllegalArgumentException.class, () -> creditAccount.borrowCredit(-100),
+            "Borrow amount cannot be negative");
     }
 
-    // Test for borrowing credit that exceeds the credit limit
     @Test
     public void testBorrowCreditExceedsLimit() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> creditAccount.borrowCredit(6000));
         assertEquals("Cannot borrow more than the credit limit", exception.getMessage());
     }
 
-    // Test for repayment of credit
     @Test
     public void testRepayCredit() {
         creditAccount.borrowCredit(500);
         creditAccount.repayCredit(200);
-        assertEquals(300, creditAccount.getCreditBalance(), "Credit balance should be 300 after repayment of 200");
+        assertEquals(300.0, creditAccount.getCreditBalance(), "Credit balance should be reduced to 300");
+
+        assertThrows(IllegalArgumentException.class, () -> creditAccount.repayCredit(400),
+            "Cannot repay more than the current credit balance");
+
+        assertThrows(IllegalArgumentException.class, () -> creditAccount.repayCredit(-50),
+            "Repayment amount cannot be negative");
     }
 
-    // Test for illegal repayment amount (more than balance)
     @Test
     public void testRepayCreditTooMuch() {
         creditAccount.borrowCredit(500);
@@ -57,35 +58,30 @@ public class CreditAccountTests {
         assertEquals("Cannot repay more than the current credit balance", exception.getMessage());
     }
 
-    // Test for setting the credit limit
     @Test
     public void testSetCreditLimit() {
         creditAccount.setCreditLimit(10000);
         assertEquals(10000, creditAccount.getCreditLimit(), "Credit limit should be set to 10000");
     }
 
-    // Test for setting an invalid credit limit (negative value)
     @Test
     public void testSetInvalidCreditLimit() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> creditAccount.setCreditLimit(-500));
         assertEquals("Credit limit cannot be negative", exception.getMessage());
     }
 
-    // Test for eligibility to borrow with available credit limit
     @Test
     public void testEligibilityForCredit() {
         creditAccount.borrowCredit(2000);
         assertTrue(creditAccount.isEligibleForCredit(2000), "Should be eligible to borrow 2000 within the credit limit");
     }
 
-    // Test for ineligibility to borrow when exceeding the credit limit
     @Test
     public void testEligibilityForCreditExceedsLimit() {
         creditAccount.borrowCredit(2000);
         assertFalse(creditAccount.isEligibleForCredit(4000), "Should not be eligible to borrow more than the available credit limit");
     }
 
-    // Test for borrowing credit when credit limit is exceeded
     @Test
     public void testBorrowCreditWhenLimitExceeded() {
         creditAccount.borrowCredit(5000);
@@ -93,14 +89,12 @@ public class CreditAccountTests {
         assertEquals("Cannot borrow more than the credit limit", exception.getMessage());
     }
 
-    // Test: Cashback applied after borrowing
     @Test
     public void testCashBackAppliedAfterBorrowing() {
         creditAccount.borrowCredit(1000);
         assertTrue(creditAccount.getCreditBalance() < 1000, "Cashback should be applied after borrowing.");
     }
 
-    // Test: Correct cashback amount
     @Test
     public void testCashBackAmountCorrectness() {
         creditAccount.borrowCredit(1000);
@@ -108,16 +102,29 @@ public class CreditAccountTests {
         assertEquals(expectedBalanceAfterCashBack, creditAccount.getCreditBalance(), "Credit balance after cashback should be correct.");
     }
 
-    // Test: Negative borrow amount throws error
     @Test
     public void testCashBackDoesNotGoNegative() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> creditAccount.borrowCredit(-100));
         assertEquals("Borrow amount cannot be negative", exception.getMessage());
     }
 
-    // Test: Cashback before any borrowing
     @Test
     public void testCashBackWhenNoBorrowing() {
-        assertEquals(0, creditAccount.getCreditBalance(), "Credit balance should be zero if no credit is borrowed.");
+        assertEquals(0.0, creditAccount.getCreditBalance(), "Credit balance should be zero if no credit is borrowed.");
+    }
+
+    @Test
+    public void testCreditScoreIncreases() {
+        creditAccount.borrowCredit(500);
+        int creditScoreBefore = creditAccount.getCreditScore();
+        creditAccount.repayCredit(100);
+        int creditScoreAfter = creditAccount.getCreditScore();
+        int creditScoreDiff = creditScoreAfter - creditScoreBefore;
+        assertEquals(1, creditScoreDiff, "Credit score should increase by 1 after repayment");
+    }
+
+    @Test
+    public void testMaxCreditScoreConstant() {
+        assertEquals(850, CreditAccount.MAX_CREDIT_SCORE, "MAX_CREDIT_SCORE should be 850");
     }
 }
