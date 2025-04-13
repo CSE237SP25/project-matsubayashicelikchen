@@ -1,0 +1,6 @@
+john
+pass
+John
+Doe
+john@example.com
+123-456-7890

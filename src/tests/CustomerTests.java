@@ -4,9 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import bankapp.Customer;
-import bankapp.BankAccount;
-import bankapp.SavingsAccount;
-import bankapp.CreditAccount;
 
 public class CustomerTests {
 
@@ -53,7 +50,6 @@ public class CustomerTests {
         customer.setLastName("Smith");
         customer.setEmail("jonathan.smith@example.com");
         customer.setPhone("0987654321");
-        
         assertEquals("newPassword", customer.getPassword());
         assertEquals("Jonathan", customer.getFirstName());
         assertEquals("Smith", customer.getLastName());
@@ -61,17 +57,16 @@ public class CustomerTests {
         assertEquals("0987654321", customer.getPhone());
     }
     
-    // Note: The open savings account functionality is not fully implemented yet.
-    // This test is disabled and can be ignored for now.
-    @Disabled("Open savings account method is not implemented yet; ignore this test")
+    // Open savings account functionality is not fully implemented yet
+    @Disabled("Open savings account functionality is not fully implemented yet")
     @Test
     public void testOpenSavingsAccount() {
         Customer customer = new Customer("johnDoe", "password123", "John", "Doe", "johndoe@example.com", "1234567890");
         assertNull(customer.getSavingsAccount());
         customer.openSavingsAccount(100.0);
         assertNotNull(customer.getSavingsAccount());
-        // Attempt to open a savings account a second time should throw an exception.
-        assertThrows(IllegalStateException.class, () -> customer.openSavingsAccount(50.0));
+        Exception exception = assertThrows(IllegalStateException.class, () -> customer.openSavingsAccount(50.0));
+        assertEquals("Savings account already exists.", exception.getMessage());
     }
 
     @Test
@@ -80,7 +75,7 @@ public class CustomerTests {
         assertNull(customer.getCreditAccount());
         customer.openCreditAccount();
         assertNotNull(customer.getCreditAccount());
-        // Attempting to open another credit account should throw an exception.
-        assertThrows(IllegalStateException.class, () -> customer.openCreditAccount());
+        Exception exception = assertThrows(IllegalStateException.class, () -> customer.openCreditAccount());
+        assertEquals("Credit account already exists.", exception.getMessage());
     }
 }
