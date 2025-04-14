@@ -10,7 +10,7 @@ import java.io.IOException;
 public class CustomerBase {
     private HashMap<String, Customer> users;
     public final String pathToData = "data/user/";
-
+     
     public CustomerBase() {
         users = new HashMap<>();
         loadCustomers();
