@@ -343,6 +343,8 @@ public class Menu {
 			System.out.println("Recipient does not exist");
 			return;
 		}
+		if
+
 		this.currentUser.getCheckingAccount().withdraw(amount);
 		this.userRepository.get(recipientUsername).getCheckingAccount().deposit(amount);
 		System.out.println("Transfer successful");
