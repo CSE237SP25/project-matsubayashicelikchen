@@ -1,5 +1,6 @@
 package bankapp;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
@@ -12,7 +13,7 @@ public class Menu {
     private static final int DELETE_ACCOUNT = 4;
     private static final int DEPOSIT= 5;
     private static final int WITHDRAW = 6;
-    private static final int LOGOUT = 12; 
+    private static final int LOGOUT = 13; 
     private static final int OPEN_CREDIT = 7;
     private static final int OPEN_SAVING = 8;
     private static final int VIEW_CREDIT= 9;
@@ -21,14 +22,17 @@ public class Menu {
     private static final int CREDIT_PAY = 2;
     private static final int CREDIT_EXIT = 3;
 	private static final int TRANSFER_FUNDS = 11;
+	private static final int CHECKING_STATEMENT = 12;
     private Scanner keyboardInput;
     private Customer currentUser;
     private CustomerBase userRepository;
     private boolean isExit = false;
     private boolean isCredit = false;
+    private Statement checkingStatement;
     public Menu() {
         keyboardInput = new Scanner(System.in);
         this.userRepository = new CustomerBase();
+        this.checkingStatement = new Statement("checking.txt");
         this.currentUser = null;
     }
     public int handleOptionInput() {
@@ -189,9 +193,20 @@ public class Menu {
 			case TRANSFER_FUNDS:
 				this.transferFunds();
 				break;
+			case CHECKING_STATEMENT:
+				this.viewStatement(this.checkingStatement.getStatement(currentUser));
+				break;
     		default:
     			System.out.println("Invalid Option");
     	}
+    }
+    private void viewStatement(List<Integer> activities) {
+    	System.out.println("Here is your statement");
+    	for(Integer activity:activities) {
+    		System.out.println(activity);
+    	}
+    	System.out.println("enter any key to go back");
+    	this.handleUserInput();
     }
     private void borrow() {
     	System.out.println("Enter the amount you want to borrow");
@@ -238,6 +253,7 @@ public class Menu {
     		return;
     	}
     	this.currentUser.getCheckingAccount().withdraw(amount);
+    	this.checkingStatement.add(currentUser, -amount);
     }
     private void viewBalance() {
     	System.out.println("Your current Balance is "+this.currentUser.getCheckingAccount().getCurrentBalance());
@@ -250,6 +266,7 @@ public class Menu {
     		return;
     	}
     	this.currentUser.getCheckingAccount().deposit(amount);
+    	this.checkingStatement.add(currentUser, amount);
     }
     private void changePassword() {
         System.out.print("Enter current password: ");
@@ -344,7 +361,9 @@ public class Menu {
 			return;
 		}
 		this.currentUser.getCheckingAccount().withdraw(amount);
+		this.checkingStatement.add(currentUser, -amount);
 		this.userRepository.get(recipientUsername).getCheckingAccount().deposit(amount);
+		this.checkingStatement.add(this.userRepository.get(recipientUsername), amount);
 		System.out.println("Transfer successful");
 	}
 
@@ -368,7 +387,8 @@ public class Menu {
     	System.out.println("9. view credit(workable but probably have some bug)");
     	System.out.println("10. view saving(not finished)");
 		System.out.println("11. transfer funds"); //altered
-    	System.out.println("12. logout"); //altered
+		System.out.println("12. view statement");
+    	System.out.println("13. logout"); //altered
     }
     public void creditPanel() {
     	System.out.println("1. borrow");
