@@ -49,7 +49,7 @@ public class SavingsAccountTests {
     @Test
     public void testCalculateInterest() {
         SavingsAccount account = new SavingsAccount(101, 1000.0);
-        account.calculateInterest();
+        account.applyInterest();
         assertEquals(1020.0, account.getBalance(), 0.005); // Assuming 2% interest
     }
 
