@@ -188,6 +188,7 @@ public class Menu {
     			break;
 			case TRANSFER_FUNDS:
 				this.transferFunds();
+				break;
     		default:
     			System.out.println("Invalid Option");
     	}
