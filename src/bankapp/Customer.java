@@ -121,7 +121,7 @@ public class Customer {
         if (savingsAccount != null) {
             throw new IllegalStateException("Savings account already exists.");
         }
-        savingsAccount = new SavingsAccount(0,initialDeposit,0);
+        savingsAccount = new SavingsAccount(initialDeposit);
     }
   
     /**

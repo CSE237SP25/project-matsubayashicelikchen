@@ -1,39 +1,24 @@
 package bankapp;
 
 public class SavingsAccount {
-    private static int nextAccountNumber = 1000;
-    private final int accountNumber;  // Made final since it shouldn't change
     private double balance;
-    private final double interestRate;  // Made final if rate is fixed
-    private final int userId;  // Made final since it shouldn't change
 
-    public SavingsAccount(int userId, double initialDeposit) {
-        this(userId, initialDeposit, 0.02);  // Default interest rate 2%
-    }
+  
 
     // More flexible constructor allowing custom interest rates
-    public SavingsAccount(int userId, double initialDeposit, double interestRate) {
+    public SavingsAccount(double initialDeposit) {
         if (initialDeposit < 0) {
             throw new IllegalArgumentException("Initial deposit cannot be negative");
         }
-        if (interestRate <= 0) {
-            throw new IllegalArgumentException("Interest rate must be positive");
-        }
         
-        this.accountNumber = nextAccountNumber++;
-        this.userId = userId;
         this.balance = initialDeposit;
-        this.interestRate = interestRate;
     }
 
     public void printAccountDetails() {  
         System.out.printf("""
             Account Details:
-            Account #: %d
             Balance: $%.2f
-            Interest Rate: %.2f%%
-            User ID: %d
-            """, accountNumber, balance, interestRate * 100, userId);
+            """, balance);
     }
 
     public void deposit(double amount) {
@@ -56,12 +41,7 @@ public class SavingsAccount {
         return true;
     }
 
-    public void applyInterest() {  
-        double interest = balance * interestRate;
-        balance += interest;
-        System.out.printf("Interest applied: $%.2f. New Balance: $%.2f%n", interest, balance);
-    }
-
+    
   
     private void validatePositiveAmount(double amount, String operation) {
         if (amount <= 0) {
@@ -70,10 +50,8 @@ public class SavingsAccount {
     }
 
 
-    public int getAccountNumber() { return accountNumber; }
+    
     public double getBalance() { return balance; }
-    public int getUserId() { return userId; }
-    public double getInterestRate() { return interestRate; }
 
    
 }
