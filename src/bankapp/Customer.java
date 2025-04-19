@@ -128,11 +128,20 @@ public class Customer {
      * Opens a credit account for the customer.
      * If a credit account already exists, it will throw an IllegalStateException.
      */
+//    public void openCreditAccount() {
+//        if (creditAccount != null) {
+//            throw new IllegalStateException("Credit account already exists.");
+//        }
+//        creditAccount = new CreditAccount(username);
+//    }
+    
     public void openCreditAccount() {
         if (creditAccount != null) {
-            throw new IllegalStateException("Credit account already exists.");
+            throw new IllegalStateException("Credit account already exists");
         }
-        creditAccount = new CreditAccount();
+        this.creditAccount = new CreditAccount(this.username, new CreditStatement(this));
+        this.creditAccount.setCreditStatement(new CreditStatement(this));
+    
     }
   
     @Override

@@ -1,6 +1,7 @@
 package tests;
 
 import bankapp.CreditAccount;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +11,15 @@ public class CreditAccountTests {
 
     @BeforeEach
     public void setUp() {
-        creditAccount = new CreditAccount();
+        // 1. Create a mock Customer
+        mockCustomer = mock(Customer.class);
+        when(mockCustomer.getUsername()).thenReturn("testUser");
+        
+        // 2. Create a mock CreditStatement
+        mockCreditStatement = mock(CreditStatement.class);
+        
+        // 3. Initialize CreditAccount with dependencies
+        creditAccount = new CreditAccount("testUser", mockCreditStatement);
     }
 
     @Test
