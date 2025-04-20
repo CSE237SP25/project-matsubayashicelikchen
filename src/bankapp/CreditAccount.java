@@ -4,8 +4,6 @@ public class CreditAccount {
 	private final String username;
     public static final int MAX_CREDIT_SCORE = 850;
     private double creditBalance;
-//    private int cashBack; 
-//    private double cashBackRate;
     private double creditLimit;
     private double availableCredit; 
     private int creditScore;
@@ -20,15 +18,7 @@ public class CreditAccount {
         this.creditScore = 700;
     }
   
-//   public CreditAccount(String username) {
-//        this.creditBalance = 0;
-////        this.cashBack = 0;
-////        this.cashBackRate = 0.01; 
-//        this.creditLimit = 5000;
-//        this.availableCredit = 5000; 
-//        this.creditScore = 700;
-//        this.username = username;
-//    }
+
     
     public void setCreditStatement(CreditStatement statement) {
         this.creditStatement = statement;
@@ -89,9 +79,6 @@ public class CreditAccount {
         return (this.creditBalance + amountToBorrow) <= getAvailableCredit();
     }
     
-//    public double getCashBackRate() {
-//    	return cashBackRate; 
-//    }
       
     public double getCreditBalance() {
         return creditBalance;
