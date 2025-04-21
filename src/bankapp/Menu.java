@@ -376,6 +376,12 @@ public class Menu {
 
     private void viewBalance() {
     	System.out.println("Your current Balance is "+this.currentUser.getCheckingAccount().getCurrentBalance());
+    	if(this.currentUser.getCreditAccount() != null) {
+    		System.out.println("Your current credit account balance is " + this.currentUser.getCreditAccount().getCreditBalance());
+    	}
+    	if(this.currentUser.getSavingsAccount() != null) {
+    		System.out.println("Your current savings account balance is" + this.currentUser.getSavingsAccount().getBalance());
+    	}
     }
     private void deposit() {
     	System.out.println("Enter the amount you want to deposit");
@@ -520,8 +526,8 @@ public class Menu {
     	System.out.println("6. withdraw");
     	System.out.println("7. open a credit account");
     	System.out.println("8. open a saving account");
-    	System.out.println("9. view credit");
-    	System.out.println("10. view saving");
+    	System.out.println("9. Credit account service");
+    	System.out.println("10. Savings account service");
 		System.out.println("11. transfer funds"); //altered
 		System.out.println("12. view statement");
 		System.out.println("13. view credit account statement"); //altered
