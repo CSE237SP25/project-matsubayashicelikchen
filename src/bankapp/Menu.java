@@ -458,6 +458,14 @@ public class Menu {
 			System.out.println("Recipient does not exist");
 			return;
 		}
+		//TODO: Verify customer email, phone, user
+		System.out.println("Are you sure you want to transfer $" + amount + 
+			" to " + this.userRepository.get(recipientUsername).getEmail() + "? (y/n)");
+		String confirm = this.handleUserInput();
+		if(!confirm.equalsIgnoreCase("y")) {
+			System.out.println("Transfer canceled");
+			return;
+		}
 		this.currentUser.getCheckingAccount().withdraw(amount);
 		this.checkingStatement.add(currentUser, -amount);
 		this.userRepository.get(recipientUsername).getCheckingAccount().deposit(amount);
