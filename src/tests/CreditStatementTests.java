@@ -7,7 +7,7 @@ import bankapp.Customer;
 import bankapp.CreditStatement;
 import bankapp.CreditAccount;
 
-class CreditStatementTest {
+class CreditStatementTests {
     private Customer customer;
     private CreditAccount creditAccount;
     private CreditStatement creditStatement;
