@@ -11,6 +11,7 @@ public class Customer {
     private final BankAccount checkingAccount;
     private SavingsAccount savingsAccount;
     private CreditAccount creditAccount;
+    private SavingsStatement savingsStatement;
 
     /**
      * Constructor for a customer with all details provided.
@@ -124,16 +125,7 @@ public class Customer {
         savingsAccount = new SavingsAccount(initialDeposit);
     }
   
-    /**
-     * Opens a credit account for the customer.
-     * If a credit account already exists, it will throw an IllegalStateException.
-     */
-//    public void openCreditAccount() {
-//        if (creditAccount != null) {
-//            throw new IllegalStateException("Credit account already exists.");
-//        }
-//        creditAccount = new CreditAccount(username);
-//    }
+   
     
     public void openCreditAccount() {
         if (creditAccount != null) {
@@ -143,6 +135,15 @@ public class Customer {
         this.creditAccount.setCreditStatement(new CreditStatement(this));
     
     }
+    
+    
+    public void generateSavingsStatement() {
+        if (savingsAccount == null) {
+            throw new IllegalStateException("No savings account exists");
+        }
+        new SavingsStatement(savingsAccount).generateStatement();
+    }
+    
   
     @Override
     public String toString() {
