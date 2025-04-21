@@ -484,6 +484,7 @@ public class Menu {
 				System.out.println("Transfer cancelled");
 				return;
 			}
+		}
 
 		//TODO: Verify customer email, phone, user
 		System.out.println("Are you sure you want to transfer $" + amount + 
@@ -499,7 +500,7 @@ public class Menu {
 		this.userRepository.get(recipientUsername).getCheckingAccount().deposit(amount);
 		this.checkingStatement.add(this.userRepository.get(recipientUsername), amount);
 		System.out.println("Transfer successful");
-		}
+	
 	}
 
     public void startPanel() {
