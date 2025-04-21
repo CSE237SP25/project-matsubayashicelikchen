@@ -13,7 +13,7 @@ public class Menu {
     private static final int DELETE_ACCOUNT = 4;
     private static final int DEPOSIT= 5;
     private static final int WITHDRAW = 6;
-    private static final int LOGOUT = 13; 
+    private static final int LOGOUT = 15; 
     private static final int OPEN_CREDIT = 7;
     private static final int OPEN_SAVING = 8;
     private static final int VIEW_CREDIT= 9;
@@ -23,11 +23,14 @@ public class Menu {
     private static final int CREDIT_EXIT = 3;
 	private static final int TRANSFER_FUNDS = 11;
 	private static final int CHECKING_STATEMENT = 12;
+	private static final int CREDIT_STATEMENT = 13;
+	private static final int SAVING_STATEMENT = 14; // Add this line
     private Scanner keyboardInput;
     private Customer currentUser;
     private CustomerBase userRepository;
     private boolean isExit = false;
     private boolean isCredit = false;
+    private boolean isSaving = false;
     private Statement checkingStatement;
     public Menu() {
         keyboardInput = new Scanner(System.in);
@@ -63,6 +66,8 @@ public class Menu {
     		}else {
     			if(this.isCredit) {
     				this.handleCredit();
+    			}else if(this.isSaving) {
+    				this.handleSaving();
     			}else {
     				this.handleUser();
     			}
@@ -121,17 +126,60 @@ public class Menu {
     }
     public void handleCredit() {
     	System.out.println("Your current credit balance is "+this.currentUser.getCreditAccount().getCreditBalance());
+    	System.out.println("Your current available credit is "+this.currentUser.getCreditAccount().getAvailableCredit());
+    	System.out.println("Your current credit limit is "+this.currentUser.getCreditAccount().getCreditLimit());
+    	System.out.println("Your current credit score is "+this.currentUser.getCreditAccount().getCreditScore());
     	this.creditPanel();
     	int option = this.handleOptionInput();
     	switch(option) {
     		case CREDIT_BORROW:
-    			this.borrow();
+    			System.out.println("Enter the amount you want to borrow");
+    	    	int amountToBrorrow = this.handleOptionInput();
+    			this.currentUser.getCreditAccount().borrowCredit(amountToBrorrow);
     			break;
     		case CREDIT_PAY:
-    			this.pay();
+    			System.out.println("Enter the amount you want to pay");
+    	    	int amountToPay = this.handleOptionInput();
+    	    	this.currentUser.getCreditAccount().repayCredit(amountToPay);
     			break;
     		case CREDIT_EXIT:
     			this.isCredit = false;
+    			break;
+    		default:
+    			System.out.println("Invalid option");
+    	}
+    	
+    }
+    
+    public void handleSaving() {
+    	System.out.println("Your current savings account balance is "+this.currentUser.getSavingsAccount().getBalance());
+    	this.savingPanel();
+    	int option = this.handleOptionInput();
+    	switch(option) {
+    		case CREDIT_BORROW:
+    			System.out.println("Enter the amount you want to withdraw");
+    	    	int amountWithdraw = this.handleOptionInput();
+    	    	if(amountWithdraw > this.currentUser.getSavingsAccount().getBalance()) {
+    	    		System.out.println("Cannot withdraw more than you have in your savings account. ");
+    	    		return;
+    	    	}
+    	    	if(amountWithdraw <= 0) {
+    	    		System.out.println("Cannot withdraw 0 or negative amount. ");
+    	    		return;
+    	    	}
+    			this.currentUser.getSavingsAccount().withdraw(amountWithdraw);
+    			break;
+    		case CREDIT_PAY:
+    			System.out.println("Enter the amount you want to deposit");
+    	    	int amountDeposit = this.handleOptionInput();
+    	    	if(amountDeposit <= 0) {
+    	    		System.out.println("Cannot deposit a negative amount or 0. ");
+    	    		return;
+    	    	}
+    			this.currentUser.getSavingsAccount().deposit(amountDeposit);
+    			break;
+    		case CREDIT_EXIT:
+    			this.isSaving = false;
     			break;
     		default:
     			System.out.println("Invalid option");
@@ -182,13 +230,21 @@ public class Menu {
     			this.currentUser = null;
     			break;
     		case OPEN_CREDIT:
-    			this.openCredit();
+    			if (currentUser.getCreditAccount() != null) {
+    		        System.out.println("Credit account already exists.");
+    		    } else {
+    		        currentUser.openCreditAccount();
+    		        System.out.println("Credit account opened successfully.");
+    		    }
     			break;
-    		//case OPEN_SAVING:
-    			//this.openSaving();
-    			//break;
+    		case OPEN_SAVING:
+    			this.openSaving();
+    			break;
     		case VIEW_CREDIT:
     			this.viewCredit();
+    			break;
+    		case VIEW_SAVING:
+    			this.viewSaving();
     			break;
 			case TRANSFER_FUNDS:
 				this.transferFunds();
@@ -196,6 +252,22 @@ public class Menu {
 			case CHECKING_STATEMENT:
 				this.viewStatement(this.checkingStatement.getStatement(currentUser));
 				break;
+			case CREDIT_STATEMENT:
+				if (currentUser.getCreditAccount() == null) {
+			        System.out.println("No credit account exists. Please open one first.");
+			    } else {
+			        CreditStatement statement = currentUser.getCreditAccount().getCreditStatement();
+			        if (statement != null) {
+			            System.out.println(statement.generateStatement());
+			        } else {
+			            System.out.println("Statement system not initialized");
+			        }
+			    }
+				break;
+			case SAVING_STATEMENT:
+			    this.viewSavingStatement();
+			    break;
+				
     		default:
     			System.out.println("Invalid Option");
     	}
@@ -249,16 +321,42 @@ public class Menu {
     	}
     	this.isCredit = true;
     }
-    private void openCredit() {
-    	this.currentUser.openCreditAccount();
-    	System.out.println("Credit account opened successfully");
-    }
+    
+
+    
     private void openSaving() {
-    	System.out.println("Enter your initial deposit");
-    	int amount = this.handleOptionInput();
-    	this.currentUser.openSavingsAccount(amount);
-    	System.out.println("finish open saving account");
+        if(currentUser.getSavingsAccount() != null) {
+            System.out.println("You already opened a savings account.");
+            return; 
+        }
+        System.out.println("Enter your initial deposit");
+        int amount = this.handleOptionInput();
+        if (amount <= 0) {
+            System.out.println("Initial deposit must be positive");
+            return;
+        }
+        this.currentUser.openSavingsAccount(amount);
+        System.out.println("Savings account opened successfully");
     }
+    
+    private void viewSaving() {
+    	if(this.currentUser.getSavingsAccount()== null) {
+    		System.out.println("You don't have a savings account");
+    		return;
+    	}
+    	this.isSaving = true;
+    }
+    
+    private void viewSavingStatement() {
+        if (currentUser.getSavingsAccount() == null) {
+            System.out.println("No savings account exists. Please open one first.");
+            return;
+        }
+        currentUser.generateSavingsStatement();
+        System.out.println("Press any key to continue...");
+        this.handleUserInput();
+    }
+    
     private void withdraw() {
     	System.out.println("Enter the number you want to WITHDRAW");
     	int amount = this.handleOptionInput();
@@ -386,6 +484,15 @@ public class Menu {
 				System.out.println("Transfer cancelled");
 				return;
 			}
+
+		//TODO: Verify customer email, phone, user
+		System.out.println("Are you sure you want to transfer $" + amount + 
+			" to " + this.userRepository.get(recipientUsername).getEmail() + "? (y/n)");
+		String confirm = this.handleUserInput();
+		if(!confirm.equalsIgnoreCase("y")) {
+			System.out.println("Transfer canceled");
+			return;
+
 		}
 		this.currentUser.getCheckingAccount().withdraw(amount);
 		this.checkingStatement.add(currentUser, -amount);
@@ -410,16 +517,24 @@ public class Menu {
     	System.out.println("5. deposit");
     	System.out.println("6. withdraw");
     	System.out.println("7. open a credit account");
-    	System.out.println("8. open a saving account (not finished)");
-    	System.out.println("9. view credit(workable but probably have some bug)");
-    	System.out.println("10. view saving(not finished)");
+    	System.out.println("8. open a saving account");
+    	System.out.println("9. view credit");
+    	System.out.println("10. view saving");
 		System.out.println("11. transfer funds"); //altered
 		System.out.println("12. view statement");
-    	System.out.println("13. logout"); //altered
+		System.out.println("13. view credit account statement"); //altered
+		System.out.println("14. view savings account statement");
+    	System.out.println("15. logout"); //altered
     }
     public void creditPanel() {
     	System.out.println("1. borrow");
     	System.out.println("2. pay");
+    	System.out.println("3. exit");
+    }
+    
+    public void savingPanel() {
+    	System.out.println("1. withdraw");
+    	System.out.println("2. deposit");
     	System.out.println("3. exit");
     }
     public static void main(String[] args) {

@@ -1,44 +1,38 @@
 package bankapp;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 public class SavingsAccount {
-    private static int nextAccountNumber = 1000;
-    private final int accountNumber;  // Made final since it shouldn't change
-    private double balance;
-    private final double interestRate;  // Made final if rate is fixed
-    private final int userId;  // Made final since it shouldn't change
+	private double balance;
+    private List<String> transactionHistory;
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public SavingsAccount(int userId, double initialDeposit) {
-        this(userId, initialDeposit, 0.02);  // Default interest rate 2%
-    }
+  
 
-    // More flexible constructor allowing custom interest rates
-    public SavingsAccount(int userId, double initialDeposit, double interestRate) {
+    public SavingsAccount(double initialDeposit) {
         if (initialDeposit < 0) {
             throw new IllegalArgumentException("Initial deposit cannot be negative");
         }
-        if (interestRate <= 0) {
-            throw new IllegalArgumentException("Interest rate must be positive");
-        }
-        
-        this.accountNumber = nextAccountNumber++;
-        this.userId = userId;
         this.balance = initialDeposit;
-        this.interestRate = interestRate;
+        this.transactionHistory = new ArrayList<>();
     }
 
     public void printAccountDetails() {  
         System.out.printf("""
             Account Details:
-            Account #: %d
             Balance: $%.2f
-            Interest Rate: %.2f%%
-            User ID: %d
-            """, accountNumber, balance, interestRate * 100, userId);
+            """, balance);
     }
 
     public void deposit(double amount) {
         validatePositiveAmount(amount, "Deposit");
         balance += amount;
+        String transaction = String.format("%s | DEPOSIT    | %10.2f | CREDIT", 
+            LocalDate.now().format(DATE_FORMATTER), amount);
+        transactionHistory.add(transaction);
         System.out.printf("Deposited $%.2f. New Balance: $%.2f%n", amount, balance);
     }
 
@@ -52,16 +46,19 @@ public class SavingsAccount {
         }
         
         balance -= amount;
+        String transaction = String.format("%s | WITHDRAWAL | %10.2f | DEBIT", 
+            LocalDate.now().format(DATE_FORMATTER), amount);
+        transactionHistory.add(transaction);
         System.out.printf("Withdrew $%.2f. New Balance: $%.2f%n", amount, balance);
         return true;
     }
-
-    public void applyInterest() {  
-        double interest = balance * interestRate;
-        balance += interest;
-        System.out.printf("Interest applied: $%.2f. New Balance: $%.2f%n", interest, balance);
+    
+    
+    public List<String> getTransactionHistory() {
+        return new ArrayList<>(transactionHistory); // Return a copy for immutability
     }
 
+    
   
     private void validatePositiveAmount(double amount, String operation) {
         if (amount <= 0) {
@@ -70,10 +67,8 @@ public class SavingsAccount {
     }
 
 
-    public int getAccountNumber() { return accountNumber; }
+    
     public double getBalance() { return balance; }
-    public int getUserId() { return userId; }
-    public double getInterestRate() { return interestRate; }
 
    
 }

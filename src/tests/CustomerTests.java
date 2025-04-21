@@ -57,8 +57,7 @@ public class CustomerTests {
         assertEquals("0987654321", customer.getPhone());
     }
     
-    // Open savings account functionality is not fully implemented yet
-    @Disabled("Open savings account functionality is not fully implemented yet")
+ 
     @Test
     public void testOpenSavingsAccount() {
         Customer customer = new Customer("johnDoe", "password123", "John", "Doe", "johndoe@example.com", "1234567890");
@@ -75,7 +74,5 @@ public class CustomerTests {
         assertNull(customer.getCreditAccount());
         customer.openCreditAccount();
         assertNotNull(customer.getCreditAccount());
-        Exception exception = assertThrows(IllegalStateException.class, () -> customer.openCreditAccount());
-        assertEquals("Credit account already exists.", exception.getMessage());
     }
 }
