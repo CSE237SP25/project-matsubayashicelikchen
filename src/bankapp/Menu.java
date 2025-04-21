@@ -280,16 +280,30 @@ public class Menu {
     	System.out.println("enter any key to go back");
     	this.handleUserInput();
     }
-    private void borrow() {
+    
+	private boolean largeSumWithdraw(){
+		System.out.println("You are trying to move a large sum of money, please confirm your identity.");
+		System.out.print("Enter your password: ");
+		String password = handleUserInput();
+		if (!password.equals(currentUser.getPassword())) {
+			System.out.println("Incorrect password. Withdrawal cancelled.");
+			return false;
+		}
+		System.out.println("Identity confirmed.");
+		return true;
+	}
+	
+	private void borrow() {
     	System.out.println("Enter the amount you want to borrow");
     	int amount = this.handleOptionInput();
     	if(amount < 0) {
     		System.out.println("amount can't be negative");
     		return;
     	}
-    	this.currentUser.getCreditAccount().borrowCredit(amount);
-    	System.out.println("borrow success");
+		this.currentUser.getCreditAccount().borrowCredit(amount);
+   		System.out.println("borrow success");
     }
+
     private void pay() {
     	System.out.println("Enter the amount you want to pay");
     	int amount = this.handleOptionInput();
@@ -350,9 +364,16 @@ public class Menu {
     		System.out.println("The amount should not be larger than your balance");
     		return;
     	}
+		if (amount > 500) {
+			if (!largeSumWithdraw()){
+				System.out.println("Withdrawal cancelled.");
+				return;
+			}
+		}
     	this.currentUser.getCheckingAccount().withdraw(amount);
     	this.checkingStatement.add(currentUser, -amount);
     }
+
     private void viewBalance() {
     	System.out.println("Your current Balance is "+this.currentUser.getCheckingAccount().getCurrentBalance());
     }
@@ -458,6 +479,12 @@ public class Menu {
 			System.out.println("Recipient does not exist");
 			return;
 		}
+		if (amount > 500) {
+			if (!largeSumWithdraw()){
+				System.out.println("Transfer cancelled");
+				return;
+			}
+
 		//TODO: Verify customer email, phone, user
 		System.out.println("Are you sure you want to transfer $" + amount + 
 			" to " + this.userRepository.get(recipientUsername).getEmail() + "? (y/n)");
@@ -465,6 +492,7 @@ public class Menu {
 		if(!confirm.equalsIgnoreCase("y")) {
 			System.out.println("Transfer canceled");
 			return;
+
 		}
 		this.currentUser.getCheckingAccount().withdraw(amount);
 		this.checkingStatement.add(currentUser, -amount);
