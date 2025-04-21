@@ -499,6 +499,7 @@ public class Menu {
 		this.userRepository.get(recipientUsername).getCheckingAccount().deposit(amount);
 		this.checkingStatement.add(this.userRepository.get(recipientUsername), amount);
 		System.out.println("Transfer successful");
+		}
 	}
 
     public void startPanel() {
