@@ -378,9 +378,13 @@ public class Menu {
     	System.out.println("Your current Balance is "+this.currentUser.getCheckingAccount().getCurrentBalance());
     	if(this.currentUser.getCreditAccount() != null) {
     		System.out.println("Your current credit account balance is " + this.currentUser.getCreditAccount().getCreditBalance());
+    	}else {
+    		System.out.println("Currently you don't have a credit account, open one if you need one.");
     	}
     	if(this.currentUser.getSavingsAccount() != null) {
     		System.out.println("Your current savings account balance is" + this.currentUser.getSavingsAccount().getBalance());
+    	}else {
+    		System.out.println("Currently you don't have a savings account, open one if you need one.");
     	}
     }
     private void deposit() {
