@@ -13,7 +13,7 @@ public class Menu {
     private static final int DELETE_ACCOUNT = 4;
     private static final int DEPOSIT= 5;
     private static final int WITHDRAW = 6;
-    private static final int LOGOUT = 15; 
+    private static final int LOGOUT = 16; // House loan changed Logout from 15 to 16
     private static final int OPEN_CREDIT = 7;
     private static final int OPEN_SAVING = 8;
     private static final int VIEW_CREDIT= 9;
@@ -25,12 +25,18 @@ public class Menu {
 	private static final int CHECKING_STATEMENT = 12;
 	private static final int CREDIT_STATEMENT = 13;
 	private static final int SAVING_STATEMENT = 14; // Add this line
+	private static final int VIEW_HOUSE_LOAN = 15; // Start House loan: added these options
+	private static final int GET_HOUSE_LOAN = 1;
+	private static final int PAY_HOUSE_LOAN = 2;
+	private static final int EXIT_HOUSE_LOAN = 3; // End house loan
+
     private Scanner keyboardInput;
     private Customer currentUser;
     private CustomerBase userRepository;
     private boolean isExit = false;
     private boolean isCredit = false;
     private boolean isSaving = false;
+    private boolean isHouseLoan = false; // House loan option added
     private Statement checkingStatement;
     public Menu() {
         keyboardInput = new Scanner(System.in);
@@ -59,6 +65,30 @@ public class Menu {
     		}
     	}
     }
+    
+    public double handlePositiveDoubleValue() {
+    	double value;
+    	
+    	while(true) {
+    		
+    		if (keyboardInput.hasNextDouble()) {
+    			value = this.keyboardInput.nextDouble();
+    			
+    			while (value < 0) {
+    				System.out.println("Enter a positive value");
+    				value = this.keyboardInput.nextDouble();
+    			}      			
+    			break;
+    			
+    		}else {
+    			this.keyboardInput.next();
+    			System.out.println("Invalid Input, enter a valid amount");
+    		}
+    	}
+    	this.keyboardInput.nextLine();
+    	return value;
+    }
+    
     public void run() {
     	while(!isExit) {
     		if(this.currentUser == null) {
@@ -68,7 +98,9 @@ public class Menu {
     				this.handleCredit();
     			}else if(this.isSaving) {
     				this.handleSaving();
-    			}else {
+    			} else if (isHouseLoan) {
+    				this.handleHouseLoan(); // House loan option added
+    			} else {
     				this.handleUser();
     			}
     		}
@@ -124,6 +156,53 @@ public class Menu {
             System.out.println("Registration failed.");
         }
     }
+    
+    // House loan added this function
+    public void handleHouseLoan() {
+    	houseLoanPanel();
+    	int option = handleOptionInput();
+    	
+    	switch (option) {
+    		case GET_HOUSE_LOAN:
+    			if (currentUser.getHouseLoan() != null) {
+    				System.out.println("We do not offer more than one house loan at the same time");
+    			} else {
+    				System.out.println("Enter the price of the house you want to buy");
+        			double housePrice = handlePositiveDoubleValue();
+        			System.out.println("Enter the down payment you want to put on the house");
+        			double downPayment = handlePositiveDoubleValue();
+        			while (downPayment > housePrice) {
+        				System.out.println("Down payment cannot be more than house price");
+        				System.out.println("Re-enter valid down payment amount");
+        				downPayment = handlePositiveDoubleValue();
+        			}
+        			currentUser.getLoanForHouse(housePrice, downPayment);
+    			}			
+    			break;
+    		case PAY_HOUSE_LOAN:
+    			if (currentUser.getHouseLoan() == null) {
+    				System.out.println("No outstanding loans to pay");
+    				break;
+    			}
+    			if (currentUser.getHouseLoan().getLeftOverLoan() == 0) {
+    				currentUser.reSetHouseLoan();
+    				System.out.println("No outstanding loans to pay");
+    				break;
+    			}
+    			if (currentUser.getHouseLoan() != null) {
+    				System.out.println("Enter the amount you want to pay");
+        	    	double payment = handlePositiveDoubleValue();
+        	    	currentUser.getHouseLoan().makePayment(payment);
+    			}	
+    			break;
+    		case EXIT_HOUSE_LOAN:
+    			isHouseLoan = false;
+    			break;
+    		default:
+    			System.out.println("Invalid option");
+    	}
+    }
+    
     public void handleCredit() {
     	System.out.println("Your current credit balance is "+this.currentUser.getCreditAccount().getCreditBalance());
     	System.out.println("Your current available credit is "+this.currentUser.getCreditAccount().getAvailableCredit());
@@ -267,7 +346,9 @@ public class Menu {
 			case SAVING_STATEMENT:
 			    this.viewSavingStatement();
 			    break;
-				
+			case VIEW_HOUSE_LOAN:
+				isHouseLoan = true;
+				break;
     		default:
     			System.out.println("Invalid Option");
     	}
@@ -536,7 +617,8 @@ public class Menu {
 		System.out.println("12. view statement");
 		System.out.println("13. view credit account statement"); //altered
 		System.out.println("14. view savings account statement");
-    	System.out.println("15. logout"); //altered
+		System.out.println("15. House loan service"); // insert house loan
+    	System.out.println("16. logout"); //altered
     }
     public void creditPanel() {
     	System.out.println("1. borrow");
@@ -549,6 +631,15 @@ public class Menu {
     	System.out.println("2. deposit");
     	System.out.println("3. exit");
     }
+    
+    // start insert house loan
+    public void houseLoanPanel() {
+    	System.out.println("1. Take out a loan for a house");
+    	System.out.println("2. Make payment");
+    	System.out.println("3. Exit");
+    }
+    // end insert house loan
+    
     public static void main(String[] args) {
         Menu bankMenu = new Menu();
         bankMenu.run();
