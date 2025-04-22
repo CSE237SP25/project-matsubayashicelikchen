@@ -12,6 +12,7 @@ public class Customer {
     private SavingsAccount savingsAccount;
     private CreditAccount creditAccount;
     private SavingsStatement savingsStatement;
+    private HouseLoan houseLoan;
 
     /**
      * Constructor for a customer with all details provided.
@@ -35,6 +36,7 @@ public class Customer {
         // Automatically initialize the checking account upon creation.
         this.checkingAccount = new BankAccount();
         // savingsAccount and creditAccount remain null until opened.
+        // House loan stays null until opened
     }
 
     /**
@@ -90,6 +92,10 @@ public class Customer {
     public CreditAccount getCreditAccount() {
         return creditAccount;
     }
+    
+    public HouseLoan getHouseLoan() {
+    	return houseLoan;
+    }
 
     // Setters for mutable fields (username and account fields have no setters)
     public void setPassword(String password) {
@@ -110,6 +116,10 @@ public class Customer {
   
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+    
+    public void reSetHouseLoan() {
+    	houseLoan = null;
     }
     
     /**
@@ -134,6 +144,18 @@ public class Customer {
         this.creditAccount = new CreditAccount(this.username, new CreditStatement(this));
         this.creditAccount.setCreditStatement(new CreditStatement(this));
     
+    }
+    
+    // house loan added this function
+    public void getLoanForHouse(double homePrice, double downPayment) {
+        if (houseLoan != null) {
+            throw new IllegalStateException("House loan already taken");
+        }
+        houseLoan = new HouseLoan(homePrice, downPayment);
+        System.out.println("success");
+        System.out.println("Loan Amount $: " + (homePrice - downPayment));
+        System.out.println("Amount you have to pay over the next 30 years after interest $: " + 
+        					houseLoan.getLeftOverLoan());
     }
     
     
