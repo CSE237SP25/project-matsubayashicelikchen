@@ -1,112 +1,83 @@
 package bankapp;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
+/**
+ * Manages transaction statements for customers, persisting them under data/user/{username}/{fileName}.
+ */
 public class Statement {
     private final String pathToData = "data/user/";
-    private String file;
-    private Map<String, List<Integer>> content;
-    
-    public Statement(String file) {
-        this.file = file;
-        this.loadStatement();
+    private final String fileName;
+    private final Map<String, List<Integer>> content = new HashMap<>();
+
+    public Statement(String fileName) {
+        this.fileName = fileName;
+        loadStatement();
     }
-    
-    public void loadStatement() {
+
+    private void loadStatement() {
         File baseDir = new File(pathToData);
-        if (!baseDir.exists() || !baseDir.isDirectory()) {
-            return;
-        }
-        
+        if (!baseDir.exists() || !baseDir.isDirectory()) return;
+
         File[] userDirs = baseDir.listFiles(File::isDirectory);
-        if (userDirs == null) {
-            return;
-        }
-        
-        content = new HashMap<>();
-        
+        if (userDirs == null) return;
+
         for (File userDir : userDirs) {
-            File infoFile = new File(userDir, this.file);
-            if (!infoFile.exists() || !infoFile.isFile()) {
-                try {
-                    infoFile.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-                content.put(userDir.getName(), new ArrayList<>());
-                continue;
-            }
-            
+            String username = userDir.getName();
             List<Integer> activity = new ArrayList<>();
-            try (BufferedReader br = new BufferedReader(new FileReader(infoFile))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    line = line.trim();
-                    if (!line.isEmpty()) {
-                        try {
-                            int transaction = Integer.parseInt(line);
-                            activity.add(transaction);
-                        } catch (NumberFormatException e) {
-                            System.err.println("Invalid number format in file " + infoFile.getPath() + ": " + line);
+            File stmtFile = new File(userDir, fileName);
+            if (!stmtFile.exists()) {
+                try { stmtFile.createNewFile(); } catch (IOException ignored) {}
+            } else {
+                try (BufferedReader br = new BufferedReader(new FileReader(stmtFile))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        line = line.trim();
+                        if (!line.isEmpty()) {
+                            try {
+                                activity.add(Integer.parseInt(line));
+                            } catch (NumberFormatException ignored) {}
                         }
                     }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+                } catch (IOException ignored) {}
             }
-            content.put(userDir.getName(), activity);
-        }
-    }
-    
-    public void add(Customer customer, int transaction) {
-        String username = customer.getUsername();
-        if (content == null) {
-            content = new HashMap<>();
-        }
-        List<Integer> activity = content.get(username);
-        if (activity == null) {
-            activity = new ArrayList<>();
             content.put(username, activity);
         }
+    }
+
+    /**
+     * Appends a transaction to both memory and the on-disk statement file.
+     * @param customer    the customer
+     * @param transaction positive for deposit, negative for withdrawal
+     */
+    public void add(Customer customer, int transaction) {
+        String username = customer.getUsername();
+        List<Integer> activity = content.computeIfAbsent(username, k -> new ArrayList<>());
         activity.add(transaction);
-        
+
         File userDir = new File(pathToData + username);
-        if (!userDir.exists()) {
-            if (!userDir.mkdirs()) {
-                System.err.println("Cannot create user directory: " + userDir.getPath());
-                return;
-            }
-        }
-        File statementFile = new File(userDir, this.file);
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(statementFile, true))) {
+        if (!userDir.exists()) userDir.mkdirs();
+        File stmtFile = new File(userDir, fileName);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(stmtFile, true))) {
             bw.write(String.valueOf(transaction));
             bw.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException ignored) {}
     }
-    
+
+    /**
+     * Returns the formatted statement lines, e.g. "Deposit | 150" or "Withdraw | -50".
+     */
     public List<String> getStatement(Customer customer) {
-        String username = customer.getUsername();
-        List<Integer> activity = this.content.get(username);
-        List<String> res = new ArrayList<String>();
-        for(Integer amount : activity) {
-        	if(amount > 0) {
-        		res.add("Deposit | "+amount);
-        	}else {
-        		res.add("Withdraw | "+amount);
-        	}
+        List<Integer> activity = content.getOrDefault(customer.getUsername(), Collections.emptyList());
+        List<String> result = new ArrayList<>();
+        for (Integer amt : activity) {
+            if (amt >= 0) {
+                result.add("Deposit | " + amt);
+            } else {
+                result.add("Withdraw | " + amt);
+            }
         }
-        return res;
+        return result;
     }
 }
