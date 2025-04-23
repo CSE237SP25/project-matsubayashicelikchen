@@ -1,60 +1,56 @@
 package tests;
 
-public class BankAccountTests{
-    private double balance;
-    private double creditBalance;
+import bankapp.BankAccount;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-    public BankAccountTests() {
-        this.balance = 0;
-        this.creditBalance = 0;
+public class BankAccountTests {
+
+    private BankAccount account;
+
+    @BeforeEach
+    public void setUp() {
+        account = new BankAccount();
     }
 
-    public void deposit(double amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Deposit amount cannot be negative");
-        }
-        this.balance += amount;
+    @Test
+    public void testDepositIncreasesBalance() {
+        account.deposit(100.0);
+        assertEquals(100.0, account.getCurrentBalance(), "Deposit should increase balance by 100");
     }
 
-    public double getCurrentBalance() {
-        return balance;
+    @Test
+    public void testDepositNegativeAmountThrowsException() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            account.deposit(-50.0);
+        });
+        assertEquals("Deposit amount cannot be negative", exception.getMessage());
     }
 
-    public boolean withdraw(double amount) {
-        if (ensureValid(amount)) {
-            this.balance -= amount;
-            return true;
-        }
-        return false;
+    @Test
+    public void testWithdrawDecreasesBalance() {
+        account.deposit(200.0);
+        boolean result = account.withdraw(50.0);
+        assertTrue(result, "Withdrawal of valid amount should return true");
+        assertEquals(150.0, account.getCurrentBalance(), "Balance should decrease by 50");
     }
 
-    public boolean ensureValid(double withdrawalAmt) {
-        if (withdrawalAmt > balance) {
-            throw new IllegalArgumentException("Attempting to withdraw sum greater than balance");
-        } else if (withdrawalAmt <= 0) {
-            throw new IllegalArgumentException("Must withdraw a positive sum of money");
-        }
-        return true;
+    @Test
+    public void testWithdrawMoreThanBalanceThrowsException() {
+        account.deposit(100.0);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            account.withdraw(150.0);
+        });
+        assertEquals("Attempting to withdraw sum greater than balance", exception.getMessage());
     }
 
-    public double getCreditBalance() {
-        return creditBalance;
-    }
-
-    public void borrowCredit(double amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Cannot borrow a negative amount");
-        }
-        creditBalance += amount;
-    }
-
-    public void repayCredit(double amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Cannot repay a negative amount");
-        }
-        if (amount > creditBalance) {
-            throw new IllegalArgumentException("Repay amount exceeds credit balance");
-        }
-        creditBalance -= amount;
+    @Test
+    public void testWithdrawNonPositiveAmountThrowsException() {
+        account.deposit(100.0);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            account.withdraw(0);
+        });
+        assertEquals("Must withdraw a positive sum of money", exception.getMessage());
     }
 }

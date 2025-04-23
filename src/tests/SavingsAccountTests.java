@@ -1,64 +1,92 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
+
 import bankapp.SavingsAccount;
 
-public class SavingsAccountTests {
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Test
-    public void testOpenSavingsAccount() {
-        // Create a savings account with an initial deposit of $500
-        SavingsAccount account = new SavingsAccount(101, 500.0);
-
-        // Verify initial balance
-        assertEquals(500.0, account.getBalance(), 0.005);
+class SavingsAccountTest {
+    private SavingsAccount account;
+    
+    @BeforeEach
+    void setUp() {
+        account = new SavingsAccount(100.00); // Initial balance for most tests
     }
-
+    
     @Test
-    public void testDeposit() {
-        SavingsAccount account = new SavingsAccount(101, 100.0);
-        account.deposit(50.0);
-        assertEquals(150.0, account.getBalance(), 0.005);
+    void testInitialDeposit() {
+        assertEquals(100.00, account.getBalance(), 0.001);
     }
-
+    
     @Test
-    public void testNegativeDeposit() {
-        SavingsAccount account = new SavingsAccount(101, 100.0);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            account.deposit(-20.0);
+    void testNegativeInitialDepositThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SavingsAccount(-50.00);
         });
-        assertEquals("Deposit amount must be positive", exception.getMessage());
     }
-
+    
     @Test
-    public void testWithdrawValid() {
-        SavingsAccount account = new SavingsAccount(101, 200.0);
-        assertTrue(account.withdraw(50.0));
-        assertEquals(150.0, account.getBalance(), 0.005);
+    void testDepositPositiveAmount() {
+        account.deposit(50.00);
+        assertEquals(150.00, account.getBalance(), 0.001);
     }
-
+    
     @Test
-    public void testWithdrawInsufficientFunds() {
-        SavingsAccount account = new SavingsAccount(101, 50.0);
-        assertFalse(account.withdraw(100.0)); // Should fail
-        assertEquals(50.0, account.getBalance(), 0.005);
-    }
-
-    @Test
-    public void testCalculateInterest() {
-        SavingsAccount account = new SavingsAccount(101, 1000.0);
-        account.calculateInterest();
-        assertEquals(1020.0, account.getBalance(), 0.005); // Assuming 2% interest
-    }
-
-    @Test
-    public void testNegativeWithdrawal() {
-        SavingsAccount account = new SavingsAccount(101, 200.0);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            account.withdraw(-50.0);
+    void testDepositNegativeAmountThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            account.deposit(-10.00);
         });
-        assertEquals("Withdrawal amount must be positive", exception.getMessage());
+    }
+    
+    @Test
+    void testDepositZeroAmountThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            account.deposit(0.00);
+        });
+    }
+    
+    @Test
+    void testSuccessfulWithdrawal() {
+        assertTrue(account.withdraw(50.00));
+        assertEquals(50.00, account.getBalance(), 0.001);
+    }
+    
+    @Test
+    void testFailedWithdrawal() {
+        assertFalse(account.withdraw(150.00));
+        assertEquals(100.00, account.getBalance(), 0.001);
+    }
+    
+    @Test
+    void testWithdrawalNegativeAmountThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            account.withdraw(-10.00);
+        });
+    }
+    
+    @Test
+    void testWithdrawalZeroAmountThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            account.withdraw(0.00);
+        });
+    }
+    
+    @Test
+    void testGetBalance() {
+        assertEquals(100.00, account.getBalance(), 0.001);
+    }
+    
+    @Test
+    void testPrintAccountDetails() {
+        // This just verifies no exception is thrown
+        assertDoesNotThrow(() -> account.printAccountDetails());
+    }
+    
+    @Test
+    void testPrecisionHandling() {
+        account.deposit(0.001);
+        assertEquals(100.001, account.getBalance(), 0.0001);
     }
 }

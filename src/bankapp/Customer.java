@@ -1,8 +1,7 @@
 package bankapp;
 
 public class Customer {
-    // Instance variables
-    private final String username;       // immutable
+    private final String username;
     private String password;
     private String firstName;
     private String lastName;
@@ -11,6 +10,8 @@ public class Customer {
     private final BankAccount checkingAccount;
     private SavingsAccount savingsAccount;
     private CreditAccount creditAccount;
+    private SavingsStatement savingsStatement;
+    private HouseLoan houseLoan;
 
     /**
      * Constructor for a customer with all details provided.
@@ -34,6 +35,7 @@ public class Customer {
         // Automatically initialize the checking account upon creation.
         this.checkingAccount = new BankAccount();
         // savingsAccount and creditAccount remain null until opened.
+        // House loan stays null until opened.
     }
 
     /**
@@ -53,7 +55,6 @@ public class Customer {
     }
 
     // Getters for all fields
-
     public String getUsername() {
         return username;
     }
@@ -89,6 +90,10 @@ public class Customer {
     public CreditAccount getCreditAccount() {
         return creditAccount;
     }
+    
+    public HouseLoan getHouseLoan() {
+    	return houseLoan;
+    }
 
     // Setters for mutable fields (username and account fields have no setters)
     public void setPassword(String password) {
@@ -111,34 +116,69 @@ public class Customer {
         this.phone = phone;
     }
     
+    public void reSetHouseLoan() {
+    	houseLoan = null;
+    }
+    
     /**
      * Opens a savings account for the customer with an initial deposit.
-     * If a savings account already exists, it will throw an IllegalStateException.
      *
-     * @param initialDeposit the initial deposit for the savings account
+     * @param initialDeposit the initial deposit for the savings account.
+     * @throws IllegalStateException If a savings account already exists.
      */
     public void openSavingsAccount(double initialDeposit) {
         if (savingsAccount != null) {
             throw new IllegalStateException("Savings account already exists.");
         }
-        savingsAccount = new SavingsAccount(0,initialDeposit,0);
+        savingsAccount = new SavingsAccount(initialDeposit);
     }
-  
+    
     /**
      * Opens a credit account for the customer.
-     * If a credit account already exists, it will throw an IllegalStateException.
+     * @throws IllegalStateException If a credit account already exists.
      */
     public void openCreditAccount() {
         if (creditAccount != null) {
-            throw new IllegalStateException("Credit account already exists.");
+            throw new IllegalStateException("Credit account already exists");
         }
-        creditAccount = new CreditAccount();
+        creditAccount = new CreditAccount(username, new CreditStatement(this));
+        creditAccount.setCreditStatement(new CreditStatement(this));  
     }
+    
+    /**
+     * Gives a house loan to the customer.
+     * 
+     * @param homePrice The price of the house the customer wants to buy.
+     * @param downPayment The amount of down payment the customer will put.
+     * @throws IllegalStateException If a house loan already exists.
+     */
+    public void getLoanForHouse(double homePrice, double downPayment) {
+        if (houseLoan != null) {
+            throw new IllegalStateException("House loan already taken");
+        }
+        houseLoan = new HouseLoan(homePrice, downPayment);
+        System.out.println("success");
+        System.out.println("Loan Amount $: " + (homePrice - downPayment));
+        System.out.println("Amount you have to pay over the next 30 years after interest $: " + 
+        					houseLoan.getLeftOverLoan());
+    }
+    
+    /**
+     * Generates a savings statement for the customer.
+     * 
+     * @throws IllegalStateException If a savings account does not exist.
+     */
+    public void generateSavingsStatement() {
+        if (savingsAccount == null) {
+            throw new IllegalStateException("No savings account exists");
+        }
+        new SavingsStatement(savingsAccount).generateStatement();
+    }
+    
   
     @Override
     public String toString() {
     	String res = username+"\n"+password+"\n"+firstName+"\n"+lastName+"\n"+email+"\n"+phone;
     	return res;
-        
     }
 }

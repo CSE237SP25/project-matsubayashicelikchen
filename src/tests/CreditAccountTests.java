@@ -1,123 +1,108 @@
-ppackage tests;
+package tests;
 
-import bankapp.CreditAccount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+import bankapp.Customer;
+import bankapp.CreditStatement;
+import bankapp.CreditAccount;
 
-public class CreditAccountTests {
-
+class CreditAccountTest {
     private CreditAccount creditAccount;
+    private Customer customer;
+    private TestCreditStatement testStatement;
+
+    // Test stub that tracks transactions
+    static class TestCreditStatement extends CreditStatement {
+        String lastTransactionType;
+        double lastTransactionAmount;
+        String lastTransactionNote;
+        
+        public TestCreditStatement(Customer customer) {
+            super(customer);
+        }
+        
+        @Override
+        public void logTransaction(String type, double amount, String note) {
+            this.lastTransactionType = type;
+            this.lastTransactionAmount = amount;
+            this.lastTransactionNote = note;
+        }
+    }
 
     @BeforeEach
-    public void setUp() {
-        creditAccount = new CreditAccount();
+    void setUp() {
+        // Create a real customer with minimal required fields
+        customer = new Customer("testUser", "password", "Test", "User", "test@user.com");
+        
+        // Initialize the credit account through the proper channel
+        customer.openCreditAccount();
+        creditAccount = customer.getCreditAccount();
+        
+        // Replace the real statement with our test version
+        testStatement = new TestCreditStatement(customer);
+        creditAccount.setCreditStatement(testStatement);
     }
 
-    // Test for default credit balance
     @Test
-    public void testDefaultCreditBalance() {
-        assertEquals(0, creditAccount.getCreditBalance(), "Initial credit balance should be 0");
+    void testInitialState() {
+        assertEquals("testUser", creditAccount.getUsername());
+        assertEquals(0, creditAccount.getCreditBalance());
+        assertEquals(5000, creditAccount.getCreditLimit());
+        assertEquals(5000, creditAccount.getAvailableCredit());
+        assertEquals(700, creditAccount.getCreditScore());
+        assertNotNull(creditAccount.getCreditStatement());
     }
 
-    // Test for default credit limit
     @Test
-    public void testDefaultCreditLimit() {
-        assertEquals(5000, creditAccount.getCreditLimit(), "Default credit limit should be 5000");
-    }
-
-    // Test for borrowing credit
-    @Test
-    public void testBorrowCredit() {
-        creditAccount.borrowCredit(500);
-        assertEquals(500, creditAccount.getCreditBalance(), "Credit balance should be 500 after borrowing 500");
-    }
-
-    // Test for borrowing credit that exceeds the credit limit
-    @Test
-    public void testBorrowCreditExceedsLimit() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> creditAccount.borrowCredit(6000));
-        assertEquals("Cannot borrow more than the credit limit", exception.getMessage());
-    }
-
-    // Test for repayment of credit
-    @Test
-    public void testRepayCredit() {
-        creditAccount.borrowCredit(500);
-        creditAccount.repayCredit(200);
-        assertEquals(300, creditAccount.getCreditBalance(), "Credit balance should be 300 after repayment of 200");
-    }
-
-    // Test for illegal repayment amount (more than balance)
-    @Test
-    public void testRepayCreditTooMuch() {
-        creditAccount.borrowCredit(500);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> creditAccount.repayCredit(600));
-        assertEquals("Cannot repay more than the current credit balance", exception.getMessage());
-    }
-
-    // Test for setting the credit limit
-    @Test
-    public void testSetCreditLimit() {
-        creditAccount.setCreditLimit(10000);
-        assertEquals(10000, creditAccount.getCreditLimit(), "Credit limit should be set to 10000");
-    }
-
-    // Test for setting an invalid credit limit (negative value)
-    @Test
-    public void testSetInvalidCreditLimit() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> creditAccount.setCreditLimit(-500));
-        assertEquals("Credit limit cannot be negative", exception.getMessage());
-    }
-
-    // Test for eligibility to borrow with available credit limit
-    @Test
-    public void testEligibilityForCredit() {
-        creditAccount.borrowCredit(2000);
-        assertTrue(creditAccount.isEligibleForCredit(2000), "Should be eligible to borrow 2000 within the credit limit");
-    }
-
-    // Test for ineligibility to borrow when exceeding the credit limit
-    @Test
-    public void testEligibilityForCreditExceedsLimit() {
-        creditAccount.borrowCredit(2000);
-        assertFalse(creditAccount.isEligibleForCredit(4000), "Should not be eligible to borrow more than the available credit limit");
-    }
-
-    // Test for borrowing credit when credit limit is exceeded
-    @Test
-    public void testBorrowCreditWhenLimitExceeded() {
-        creditAccount.borrowCredit(5000);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> creditAccount.borrowCredit(1000));
-        assertEquals("Cannot borrow more than the credit limit", exception.getMessage());
-    }
-
-    // Test: Cashback applied after borrowing
-    @Test
-    public void testCashBackAppliedAfterBorrowing() {
+    void testValidBorrow() {
         creditAccount.borrowCredit(1000);
-        assertTrue(creditAccount.getCreditBalance() < 1000, "Cashback should be applied after borrowing.");
+        assertEquals(1000, creditAccount.getCreditBalance());
+        assertEquals(4000, creditAccount.getAvailableCredit());
+        assertEquals("BORROW", testStatement.lastTransactionType);
+        assertEquals(1000, testStatement.lastTransactionAmount);
     }
 
-    // Test: Correct cashback amount
     @Test
-    public void testCashBackAmountCorrectness() {
+    void testInvalidBorrow() {
+        // Test negative amount
+        creditAccount.borrowCredit(-100);
+        assertEquals(0, creditAccount.getCreditBalance());
+        assertNull(testStatement.lastTransactionType);
+        
+        // Test exceeding limit
+        creditAccount.borrowCredit(6000);
+        assertEquals(0, creditAccount.getCreditBalance());
+        assertNull(testStatement.lastTransactionType);
+    }
+
+    @Test
+    void testValidRepay() {
+        creditAccount.borrowCredit(2000);
+        testStatement.lastTransactionType = null; // Reset
+        
+        creditAccount.repayCredit(500);
+        assertEquals(1500, creditAccount.getCreditBalance());
+        assertEquals(3500, creditAccount.getAvailableCredit());
+        assertEquals(701, creditAccount.getCreditScore());
+        assertEquals("REPAY", testStatement.lastTransactionType);
+        assertEquals(500, testStatement.lastTransactionAmount);
+    }
+
+    @Test
+    void testInvalidRepay() {
+        // Test negative amount
+        creditAccount.repayCredit(-100);
+        assertEquals(0, creditAccount.getCreditBalance());
+        assertNull(testStatement.lastTransactionType);
+        
+        // Test over-repayment
         creditAccount.borrowCredit(1000);
-        double expectedBalanceAfterCashBack = 1000 - 10; // Assuming 1% cashback
-        assertEquals(expectedBalanceAfterCashBack, creditAccount.getCreditBalance(), "Credit balance after cashback should be correct.");
+        testStatement.lastTransactionType = null;
+        creditAccount.repayCredit(1500);
+        assertEquals(1000, creditAccount.getCreditBalance());
+        assertNull(testStatement.lastTransactionType);
     }
 
-    // Test: Negative borrow amount throws error
-    @Test
-    public void testCashBackDoesNotGoNegative() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> creditAccount.borrowCredit(-100));
-        assertEquals("Borrow amount cannot be negative", exception.getMessage());
-    }
-
-    // Test: Cashback before any borrowing
-    @Test
-    public void testCashBackWhenNoBorrowing() {
-        assertEquals(0, creditAccount.getCreditBalance(), "Credit balance should be zero if no credit is borrowed.");
-    }
+    
 }
