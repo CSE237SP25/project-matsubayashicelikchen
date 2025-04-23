@@ -49,11 +49,20 @@ public class Menu {
 	private boolean isSaving = false;
 	private boolean isHouseLoan = false;
 
+	/*
+	 * Simulates a bank application.
+	 * 
+	 * @param args Command line arguments.
+	 */
 	public static void main(String[] args) {
 		Menu bankMenu = new Menu();
 		bankMenu.run();
 	}
 	
+	/**
+	 * Constructor for Menu class
+	 * Initializes the instance variables for the class
+	 */
 	public Menu() {
 		keyboardInput = new Scanner(System.in);
 		this.userRepository = new CustomerBase();
@@ -309,6 +318,261 @@ public class Menu {
 	}
 	
 	/**
+	 * Helper method for handleUser()
+	 * Displays user's personal information 
+	 */
+	private void viewInfo() {
+		if (currentUser == null) {
+			System.out.println("No user is logged in.");
+			return;
+		}
+		System.out.println("Username: " + currentUser.getUsername());
+		System.out.println("First Name: " + currentUser.getFirstName());
+		System.out.println("Last Name: " + currentUser.getLastName());
+		System.out.println("Email: " + currentUser.getEmail());
+		System.out.println("Phone: " + currentUser.getPhone());
+	}
+	
+	/**
+	 * Helper method for handleUser()
+	 * Validates user and allows user to change their password.
+	 */
+	private void changePassword() {
+		System.out.print("Enter current password: ");
+		String currentPass = handleUserInput();
+		if (!currentPass.equals(currentUser.getPassword())) {
+			System.out.println("Incorrect current password.");
+			return;
+		}
+		System.out.print("Enter new password: ");
+		String newPass = handleUserInput();
+		System.out.print("Confirm new password: ");
+		String confirmPass = handleUserInput();
+		if (!newPass.equals(confirmPass)) {
+			System.out.println("New password and confirmation do not match.");
+			return;
+		}
+		currentUser.setPassword(newPass);
+		if (userRepository.update(currentUser)) {
+			System.out.println("Password changed successfully.");
+		} else {
+			System.out.println("Password update failed.");
+		}
+	}
+	
+	/**
+	 * Helper method for handleUser()
+	 * Allows user to modify personal information
+	 */
+	private void editInfo() {
+		System.out.print("Enter new first name (" + currentUser.getFirstName() + "): ");
+		String newFirstName = handleUserInput();
+		if (!newFirstName.trim().isEmpty()) {
+			currentUser.setFirstName(newFirstName);
+		}
+		System.out.print("Enter new last name (" + currentUser.getLastName() + "): ");
+		String newLastName = handleUserInput();
+		if (!newLastName.trim().isEmpty()) {
+			currentUser.setLastName(newLastName);
+		}
+		System.out.print("Enter new email (" + currentUser.getEmail() + "): ");
+		String newEmail = handleUserInput();
+		if (!newEmail.trim().isEmpty()) {
+			currentUser.setEmail(newEmail);
+		}
+		System.out.print("Enter new phone (" + currentUser.getPhone() + "): ");
+		String newPhone = handleUserInput();
+		if (!newPhone.trim().isEmpty()) {
+			currentUser.setPhone(newPhone);
+		}
+		if (userRepository.update(currentUser)) {
+			System.out.println("Information updated successfully.");
+		} else {
+			System.out.println("Failed to update information.");
+		}
+	}
+	
+	/**
+	 * Helper method for handleUser()
+	 * Confirms request to delete account. If confirmed deletes account.
+	 */
+	private void deleteAccount() {
+		System.out.print("Are you sure you want to delete your account? (y/n): ");
+		String confirm = handleUserInput();
+		if (!confirm.equalsIgnoreCase("y")) {
+			System.out.println("Account deletion canceled.");
+			return;
+		}
+		if (userRepository.delete(currentUser)) {
+			System.out.println("Account deleted successfully.");
+			currentUser = null;
+		} else {
+			System.out.println("Failed to delete account.");
+		}
+	}
+	
+	/**
+	 * Helper method for handleUser()
+	 * Deposits money into the checking account if a valid amount is entered.
+	 */
+	private void deposit() {
+		System.out.println("Enter the amount you want to deposit");
+		int amount = this.handleOptionInput();
+		if (amount < 0) {
+			System.out.println("amount can't be negative");
+			return;
+		}
+		this.currentUser.getCheckingAccount().deposit(amount);
+		this.checkingStatement.add(currentUser, amount);
+	}
+	
+	/**
+	 * Helper method for handleUser()
+	 * Withdraws money from the checking account if a valid amount is requested.
+	 */
+	private void withdraw() {
+		System.out.println("Enter the number you want to WITHDRAW");
+		int amount = this.handleOptionInput();
+		if (amount > this.currentUser.getCheckingAccount().getCurrentBalance()) {
+			System.out.println("The amount should not be larger than your balance");
+			return;
+		}
+		if (amount > 500) {
+			if (!largeSumWithdraw()) {
+				System.out.println("Withdrawal cancelled.");
+				return;
+			}
+		}
+		this.currentUser.getCheckingAccount().withdraw(amount);
+		this.checkingStatement.add(currentUser, -amount);
+	}
+	
+	/**
+	 * Helper method for handleUser()
+	 * Opens a savings account with an initial deposit for the customer
+	 * if they do not have one already.
+	 */
+	private void openSaving() {
+		if (currentUser.getSavingsAccount() != null) {
+			System.out.println("You already opened a savings account.");
+			return;
+		}
+		System.out.println("Enter your initial deposit");
+		int amount = this.handleOptionInput();
+		if (amount <= 0) {
+			System.out.println("Initial deposit must be positive");
+			return;
+		}
+		this.currentUser.openSavingsAccount(amount);
+		System.out.println("Savings account opened successfully");
+	}
+	
+	/**
+	 * Helper method for handleUser().
+	 * checks if a credit account exists. 
+	 * If it does sets state to view the credit panel.
+	 */
+	private void viewCredit() {
+		if (this.currentUser.getCreditAccount() == null) {
+			System.out.println("You don't have a credit account");
+			return;
+		}
+		this.isCredit = true;
+	}
+
+	/**
+	 * Helper method for handleUser().
+	 * checks if a savings account exists. 
+	 * If it does sets state to view the savings panel.
+	 */
+	private void viewSaving() {
+		if (this.currentUser.getSavingsAccount() == null) {
+			System.out.println("You don't have a savings account");
+			return;
+		}
+		this.isSaving = true;
+	}
+	
+	/**
+	 * Helper method for handleUser().
+	 * Transfers funds from one customer's checking account to 
+	 * another customer's checking account. If the amount the user
+	 * wants to transfer is a large sum of money it is validated by 
+	 * password protection.
+	 */
+	private void transferFunds() {
+		System.out.println("Enter the amount you want to transfer: ");
+		int amount = this.handleOptionInput();
+		if (amount < 0) {
+			System.out.println("Amount can't be negative");
+			return;
+		}
+		if (this.currentUser.getCheckingAccount().getCurrentBalance() < amount) {
+			System.out.println("You don't have enough available funds");
+			return;
+		}
+		System.out.println("Enter the username of the recipient: ");
+		String recipientUsername = this.handleUserInput();
+		if (!this.userRepository.exist(recipientUsername)) {
+			System.out.println("Recipient does not exist");
+			return;
+		}
+		int largeSumOfMoney = 500;
+		if (amount > largeSumOfMoney) {
+			if (!largeSumWithdraw()) {
+				System.out.println("Transfer cancelled");
+				return;
+			}
+		}
+
+		System.out.println("Are you sure you want to transfer $" + amount + " to "
+				+ this.userRepository.get(recipientUsername).getEmail() + "? (y/n)");
+		String confirm = this.handleUserInput();
+		if (!confirm.equalsIgnoreCase("y")) {
+			System.out.println("Transfer canceled");
+			return;
+
+		}
+		this.currentUser.getCheckingAccount().withdraw(amount);
+		this.checkingStatement.add(currentUser, -amount);
+		this.userRepository.get(recipientUsername).getCheckingAccount().deposit(amount);
+		this.checkingStatement.add(this.userRepository.get(recipientUsername), amount);
+		System.out.println("Transfer successful");
+	}
+	
+	/**
+	 * Ensures the current user really wants to transact a large sum of money
+	 * and password protects this transaction.
+	 * 
+	 * @return The status of the transaction i.e. whether it was successful or not.
+	 */
+	private boolean largeSumWithdraw() {
+		System.out.println("You are trying to move a large sum of money, please confirm your identity.");
+		System.out.print("Enter your password: ");
+		String password = handleUserInput();
+		if (!password.equals(currentUser.getPassword())) {
+			System.out.println("Incorrect password. Withdrawal cancelled.");
+			return false;
+		}
+		System.out.println("Identity confirmed.");
+		return true;
+	}
+	
+	/**
+	 * Helper method for handleUser()
+	 * If a savings account exists for the customer it prints the savings statement
+	 */
+	private void viewSavingStatement() {
+		if (currentUser.getSavingsAccount() == null) {
+			System.out.println("No savings account exists. Please open one first.");
+			return;
+		}
+		currentUser.generateSavingsStatement();
+		System.out.println("Press any key to continue...");
+		this.handleUserInput();
+	}
+	
+	/**
 	 * Handles the view and actions relating to a user's credit account.
 	 */
 	public void handleCredit() {
@@ -336,7 +600,6 @@ public class Menu {
 		default:
 			System.out.println("Invalid option");
 		}
-
 	}
 
 	/**
@@ -442,104 +705,45 @@ public class Menu {
 	}
 
 	/**
-	 * Ensures the current user really wants to transact a large sum of money
-	 * and password protects this transaction.
-	 * 
-	 * @return The status of the transaction i.e. whether it was successful or not.
+	 * Prints options before login
 	 */
-	private boolean largeSumWithdraw() {
-		System.out.println("You are trying to move a large sum of money, please confirm your identity.");
-		System.out.print("Enter your password: ");
-		String password = handleUserInput();
-		if (!password.equals(currentUser.getPassword())) {
-			System.out.println("Incorrect password. Withdrawal cancelled.");
-			return false;
-		}
-		System.out.println("Identity confirmed.");
-		return true;
+	public void startPanel() {
+		System.out.println("Welcome to our bank");
+		System.out.println("1. Login");
+		System.out.println("2. Register");
+		System.out.println("3. Exit");
 	}
 
+	/**
+	 * Displays various account balances if opened and displays options 
+	 * for the customer to select.
+	 */
+	public void userPanel() {
+		System.out.println("Welcome " + this.currentUser.getUsername());
+		this.viewBalance();
+		System.out.println("1. view info");
+		System.out.println("2. change password");
+		System.out.println("3. edit info");
+		System.out.println("4. delete account");
+		System.out.println("5. deposit");
+		System.out.println("6. withdraw");
+		System.out.println("7. open a credit account");
+		System.out.println("8. open a saving account");
+		System.out.println("9. Credit account service");
+		System.out.println("10. Savings account service");
+		System.out.println("11. transfer funds");
+		System.out.println("12. view statement");
+		System.out.println("13. view credit account statement");
+		System.out.println("14. view savings account statement");
+		System.out.println("15. House loan service");
+		System.out.println("16. logout");
+	}
 	
-	private void borrow() {
-		System.out.println("Enter the amount you want to borrow");
-		int amount = this.handleOptionInput();
-		if (amount < 0) {
-			System.out.println("amount can't be negative");
-			return;
-		}
-		this.currentUser.getCreditAccount().borrowCredit(amount);
-		System.out.println("borrow success");
-	}
-
-	private void pay() {
-		System.out.println("Enter the amount you want to pay");
-		int amount = this.handleOptionInput();
-		if (amount > this.currentUser.getCreditAccount().getCreditBalance()) {
-			System.out.println("You can't pay an amount that exceeds your balance");
-			return;
-		}
-		this.currentUser.getCreditAccount().repayCredit(amount);
-		System.out.println("pay success");
-	}
-
-	private void viewCredit() {
-		if (this.currentUser.getCreditAccount() == null) {
-			System.out.println("You don't have a credit account");
-			return;
-		}
-		this.isCredit = true;
-	}
-
-	private void openSaving() {
-		if (currentUser.getSavingsAccount() != null) {
-			System.out.println("You already opened a savings account.");
-			return;
-		}
-		System.out.println("Enter your initial deposit");
-		int amount = this.handleOptionInput();
-		if (amount <= 0) {
-			System.out.println("Initial deposit must be positive");
-			return;
-		}
-		this.currentUser.openSavingsAccount(amount);
-		System.out.println("Savings account opened successfully");
-	}
-
-	private void viewSaving() {
-		if (this.currentUser.getSavingsAccount() == null) {
-			System.out.println("You don't have a savings account");
-			return;
-		}
-		this.isSaving = true;
-	}
-
-	private void viewSavingStatement() {
-		if (currentUser.getSavingsAccount() == null) {
-			System.out.println("No savings account exists. Please open one first.");
-			return;
-		}
-		currentUser.generateSavingsStatement();
-		System.out.println("Press any key to continue...");
-		this.handleUserInput();
-	}
-
-	private void withdraw() {
-		System.out.println("Enter the number you want to WITHDRAW");
-		int amount = this.handleOptionInput();
-		if (amount > this.currentUser.getCheckingAccount().getCurrentBalance()) {
-			System.out.println("The amount should not be larger than your balance");
-			return;
-		}
-		if (amount > 500) {
-			if (!largeSumWithdraw()) {
-				System.out.println("Withdrawal cancelled.");
-				return;
-			}
-		}
-		this.currentUser.getCheckingAccount().withdraw(amount);
-		this.checkingStatement.add(currentUser, -amount);
-	}
-
+	/**
+	 * Helper method for userPanel()
+	 * Displays the checking account balance. If credit and savings accounts exist
+	 * it also displays their balance too.
+	 */
 	private void viewBalance() {
 		System.out.println("Your current Balance is " + this.currentUser.getCheckingAccount().getCurrentBalance());
 		if (this.currentUser.getCreditAccount() != null) {
@@ -556,176 +760,28 @@ public class Menu {
 		}
 	}
 
-	private void deposit() {
-		System.out.println("Enter the amount you want to deposit");
-		int amount = this.handleOptionInput();
-		if (amount < 0) {
-			System.out.println("amount can't be negative");
-			return;
-		}
-		this.currentUser.getCheckingAccount().deposit(amount);
-		this.checkingStatement.add(currentUser, amount);
-	}
-
-	private void changePassword() {
-		System.out.print("Enter current password: ");
-		String currentPass = handleUserInput();
-		if (!currentPass.equals(currentUser.getPassword())) {
-			System.out.println("Incorrect current password.");
-			return;
-		}
-		System.out.print("Enter new password: ");
-		String newPass = handleUserInput();
-		System.out.print("Confirm new password: ");
-		String confirmPass = handleUserInput();
-		if (!newPass.equals(confirmPass)) {
-			System.out.println("New password and confirmation do not match.");
-			return;
-		}
-		currentUser.setPassword(newPass);
-		if (userRepository.update(currentUser)) {
-			System.out.println("Password changed successfully.");
-		} else {
-			System.out.println("Password update failed.");
-		}
-	}
-
-	private void deleteAccount() {
-		System.out.print("Are you sure you want to delete your account? (y/n): ");
-		String confirm = handleUserInput();
-		if (!confirm.equalsIgnoreCase("y")) {
-			System.out.println("Account deletion canceled.");
-			return;
-		}
-		if (userRepository.delete(currentUser)) {
-			System.out.println("Account deleted successfully.");
-			currentUser = null;
-		} else {
-			System.out.println("Failed to delete account.");
-		}
-	}
-
-	private void editInfo() {
-		System.out.print("Enter new first name (" + currentUser.getFirstName() + "): ");
-		String newFirstName = handleUserInput();
-		if (!newFirstName.trim().isEmpty()) {
-			currentUser.setFirstName(newFirstName);
-		}
-		System.out.print("Enter new last name (" + currentUser.getLastName() + "): ");
-		String newLastName = handleUserInput();
-		if (!newLastName.trim().isEmpty()) {
-			currentUser.setLastName(newLastName);
-		}
-		System.out.print("Enter new email (" + currentUser.getEmail() + "): ");
-		String newEmail = handleUserInput();
-		if (!newEmail.trim().isEmpty()) {
-			currentUser.setEmail(newEmail);
-		}
-		System.out.print("Enter new phone (" + currentUser.getPhone() + "): ");
-		String newPhone = handleUserInput();
-		if (!newPhone.trim().isEmpty()) {
-			currentUser.setPhone(newPhone);
-		}
-		if (userRepository.update(currentUser)) {
-			System.out.println("Information updated successfully.");
-		} else {
-			System.out.println("Failed to update information.");
-		}
-	}
-
-	private void viewInfo() {
-		if (currentUser == null) {
-			System.out.println("No user is logged in.");
-			return;
-		}
-		System.out.println("Username: " + currentUser.getUsername());
-		System.out.println("First Name: " + currentUser.getFirstName());
-		System.out.println("Last Name: " + currentUser.getLastName());
-		System.out.println("Email: " + currentUser.getEmail());
-		System.out.println("Phone: " + currentUser.getPhone());
-	}
-
-	private void transferFunds() {
-		System.out.println("Enter the amount you want to transfer: ");
-		int amount = this.handleOptionInput();
-		if (amount < 0) {
-			System.out.println("Amount can't be negative");
-			return;
-		}
-		if (this.currentUser.getCheckingAccount().getCurrentBalance() < amount) {
-			System.out.println("You don't have enough available funds");
-			return;
-		}
-		System.out.println("Enter the username of the recipient: ");
-		String recipientUsername = this.handleUserInput();
-		if (!this.userRepository.exist(recipientUsername)) {
-			System.out.println("Recipient does not exist");
-			return;
-		}
-		if (amount > 500) {
-			if (!largeSumWithdraw()) {
-				System.out.println("Transfer cancelled");
-				return;
-			}
-		}
-
-		// TODO: Verify customer email, phone, user
-		System.out.println("Are you sure you want to transfer $" + amount + " to "
-				+ this.userRepository.get(recipientUsername).getEmail() + "? (y/n)");
-		String confirm = this.handleUserInput();
-		if (!confirm.equalsIgnoreCase("y")) {
-			System.out.println("Transfer canceled");
-			return;
-
-		}
-		this.currentUser.getCheckingAccount().withdraw(amount);
-		this.checkingStatement.add(currentUser, -amount);
-		this.userRepository.get(recipientUsername).getCheckingAccount().deposit(amount);
-		this.checkingStatement.add(this.userRepository.get(recipientUsername), amount);
-		System.out.println("Transfer successful");
-
-	}
-
-	public void startPanel() {
-		System.out.println("Welcome to our bank");
-		System.out.println("1. Login");
-		System.out.println("2. Register");
-		System.out.println("3. Exit");
-	}
-
-	public void userPanel() {
-		System.out.println("Welcome " + this.currentUser.getUsername());
-		this.viewBalance();
-		System.out.println("1. view info");
-		System.out.println("2. change password");
-		System.out.println("3. edit info");
-		System.out.println("4. delete account");
-		System.out.println("5. deposit");
-		System.out.println("6. withdraw");
-		System.out.println("7. open a credit account");
-		System.out.println("8. open a saving account");
-		System.out.println("9. Credit account service");
-		System.out.println("10. Savings account service");
-		System.out.println("11. transfer funds"); // altered
-		System.out.println("12. view statement");
-		System.out.println("13. view credit account statement"); // altered
-		System.out.println("14. view savings account statement");
-		System.out.println("15. House loan service"); // insert house loan
-		System.out.println("16. logout"); // altered
-	}
-
+	
+	/**
+	 * Displays options for credit services.
+	 */
 	public void creditPanel() {
 		System.out.println("1. borrow");
 		System.out.println("2. pay");
 		System.out.println("3. exit");
 	}
 
+	/**
+	 * Displays options for savings services.
+	 */
 	public void savingPanel() {
 		System.out.println("1. withdraw");
 		System.out.println("2. deposit");
 		System.out.println("3. exit");
 	}
 
+	/**
+	 * Displays options for house loans;
+	 */
 	public void houseLoanPanel() {
 		System.out.println("1. Take out a loan for a house");
 		System.out.println("2. Make payment");
