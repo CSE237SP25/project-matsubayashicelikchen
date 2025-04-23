@@ -1,8 +1,7 @@
 package bankapp;
 
 public class Customer {
-    // Instance variables
-    private final String username;       // immutable
+    private final String username;
     private String password;
     private String firstName;
     private String lastName;
@@ -36,7 +35,7 @@ public class Customer {
         // Automatically initialize the checking account upon creation.
         this.checkingAccount = new BankAccount();
         // savingsAccount and creditAccount remain null until opened.
-        // House loan stays null until opened
+        // House loan stays null until opened.
     }
 
     /**
@@ -56,7 +55,6 @@ public class Customer {
     }
 
     // Getters for all fields
-
     public String getUsername() {
         return username;
     }
@@ -124,9 +122,9 @@ public class Customer {
     
     /**
      * Opens a savings account for the customer with an initial deposit.
-     * If a savings account already exists, it will throw an IllegalStateException.
      *
-     * @param initialDeposit the initial deposit for the savings account
+     * @param initialDeposit the initial deposit for the savings account.
+     * @throws IllegalStateException If a savings account already exists.
      */
     public void openSavingsAccount(double initialDeposit) {
         if (savingsAccount != null) {
@@ -134,19 +132,26 @@ public class Customer {
         }
         savingsAccount = new SavingsAccount(initialDeposit);
     }
-  
-   
     
+    /**
+     * Opens a credit account for the customer.
+     * @throws IllegalStateException If a credit account already exists.
+     */
     public void openCreditAccount() {
         if (creditAccount != null) {
             throw new IllegalStateException("Credit account already exists");
         }
-        this.creditAccount = new CreditAccount(this.username, new CreditStatement(this));
-        this.creditAccount.setCreditStatement(new CreditStatement(this));
-    
+        creditAccount = new CreditAccount(username, new CreditStatement(this));
+        creditAccount.setCreditStatement(new CreditStatement(this));  
     }
     
-    // house loan added this function
+    /**
+     * Gives a house loan to the customer.
+     * 
+     * @param homePrice The price of the house the customer wants to buy.
+     * @param downPayment The amount of down payment the customer will put.
+     * @throws IllegalStateException If a house loan already exists.
+     */
     public void getLoanForHouse(double homePrice, double downPayment) {
         if (houseLoan != null) {
             throw new IllegalStateException("House loan already taken");
@@ -158,7 +163,11 @@ public class Customer {
         					houseLoan.getLeftOverLoan());
     }
     
-    
+    /**
+     * Generates a savings statement for the customer.
+     * 
+     * @throws IllegalStateException If a savings account does not exist.
+     */
     public void generateSavingsStatement() {
         if (savingsAccount == null) {
             throw new IllegalStateException("No savings account exists");
@@ -171,6 +180,5 @@ public class Customer {
     public String toString() {
     	String res = username+"\n"+password+"\n"+firstName+"\n"+lastName+"\n"+email+"\n"+phone;
     	return res;
-        
     }
 }

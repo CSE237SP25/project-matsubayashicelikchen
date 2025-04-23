@@ -7,7 +7,7 @@ public class HouseLoan {
 	private double homePrice;
 	private double downPayment;
 	private double interestRate;
-	private double principalLoan; // home price - down payment
+	private double principalLoan;
 	private double leftOverLoan;
 
 	public HouseLoan(double homePrice, double downPayment) {
@@ -19,6 +19,13 @@ public class HouseLoan {
 		this.leftOverLoan = principalLoan;
 	}
 
+	/**
+	 * Accepts a valid payment to pay off the loan. Otherwise, returns false indicating 
+	 * that the amount entered is invalid.
+	 * 
+	 * @param paymentAmount The amount of money the user wants to pay off from the loan
+	 * @return Whether the transaction was successful or not.
+	 */
 	public boolean makePayment(double paymentAmount) {
 		
 		if (paymentAmount < MIN_PAYMENT) {
@@ -39,6 +46,7 @@ public class HouseLoan {
 		
 	}
 
+	// Getters for all fields
 	public double getMinPaymentAmount() {
 		return MIN_PAYMENT;
 	}

@@ -10,12 +10,22 @@ import java.io.IOException;
 public class CustomerBase {
     private HashMap<String, Customer> users;
     public final String pathToData = "data/user/";
-     
+    
+    /**
+     * Constructs a new CustomerBase and loads existing customers'
+     * information from a text file.
+     */
     public CustomerBase() {
         users = new HashMap<>();
         loadCustomers();
     }
 
+    /**
+     * Loads customer data from the data/user directory.
+     * Reads customer information from each user's "info.txt" file.
+     * For each valid file, it creates a Customer object and adds
+     * it to the users hash map.
+     */
     private void loadCustomers() {
         File baseDir = new File(pathToData);
         if (!baseDir.exists() || !baseDir.isDirectory()) {
@@ -45,6 +55,15 @@ public class CustomerBase {
         }
     }
     
+    
+    /**
+     * Adds a new customer to the system.
+     * Saves the customer data to a text file.
+     *
+     * @param customer The customer to add.
+     * @return true if the customer was added successfully,
+     * false if the username already exists or there was an error
+     */
     public boolean add(Customer customer) {
         if (users.containsKey(customer.getUsername())) {
             return false;
@@ -63,12 +82,34 @@ public class CustomerBase {
         users.put(customer.getUsername(), customer);
         return true;
     }
+    
+    /**
+     * Checks if a customer with the given username exists.
+     *
+     * @param username The username to check.
+     * @return true if the customer exists, false otherwise
+     */
     public boolean exist(String username) {
-    	return this.users.containsKey(username);
+    	return users.containsKey(username);
     }
+    
+    /**
+     * Retrieves the customer associated with the given username.
+     *
+     * @param username The username of the customer
+     * @return The Customer object if found, or null if not found
+     */
     public Customer get(String username) {
-    	return this.users.get(username);
+    	return users.get(username);
     }
+    
+    /**
+     * Updates the information of an existing customer in the text file and in the hash map.
+     *
+     * @param customer The customer with updated information
+     * @return true if the update was successful,
+     * false if the customer does not exist or there was an error
+     */
     public boolean update(Customer customer) {
         if (!users.containsKey(customer.getUsername())) {
             return false;
@@ -87,6 +128,14 @@ public class CustomerBase {
         users.put(customer.getUsername(), customer);
         return true;
     }
+    
+    /**
+     * Deletes a customer from the text file and the hash map.
+     *
+     * @param customer The customer to delete
+     * @return true if the deletion was successful
+     * false if the customer does not exist or deletion failed
+     */
     public boolean delete(Customer customer) {
         if (!users.containsKey(customer.getUsername())) {
             return false;
@@ -99,6 +148,12 @@ public class CustomerBase {
         return true;
     }
 
+    /**
+     * Recursively deletes a directory and all of its contents.
+     * 
+     * @param directory The directory to delete
+     * @return true if the directory and all contents were successfully deleted, false otherwise
+     */
     private boolean deleteDirectory(File directory) {
         if (directory.exists()) {
             File[] files = directory.listFiles();
