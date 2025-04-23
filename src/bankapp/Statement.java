@@ -96,8 +96,17 @@ public class Statement {
         }
     }
     
-    public List<Integer> getStatement(Customer customer) {
+    public List<String> getStatement(Customer customer) {
         String username = customer.getUsername();
-        return this.content.get(username);
+        List<Integer> activity = this.content.get(username);
+        List<String> res = new ArrayList<String>();
+        for(Integer amount : activity) {
+        	if(amount > 0) {
+        		res.add("Deposit | "+amount);
+        	}else {
+        		res.add("Withdraw | "+amount);
+        	}
+        }
+        return res;
     }
 }

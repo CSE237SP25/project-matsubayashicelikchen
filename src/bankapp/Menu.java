@@ -353,9 +353,9 @@ public class Menu {
     			System.out.println("Invalid Option");
     	}
     }
-    private void viewStatement(List<Integer> activities) {
+    private void viewStatement(List<String> activities) {
     	System.out.println("Here is your statement");
-    	for(Integer activity:activities) {
+    	for(String activity:activities) {
     		System.out.println(activity);
     	}
     	System.out.println("enter any key to go back");
