@@ -9,6 +9,11 @@ public class CreditAccount {
     private int creditScore;
     private CreditStatement creditStatement;
     
+    /**
+     * Constructor to initialize a CreditAccount with a username and a credit statement.
+     * @param username The username of the account holder.
+     * @param creditStatement The credit statement associated with the account.
+     */
     public CreditAccount(String username, CreditStatement creditStatement) {
         this.username = username;
         this.creditStatement = creditStatement;  // Store the provided statement
@@ -17,14 +22,20 @@ public class CreditAccount {
         this.availableCredit = 5000;
         this.creditScore = 700;
     }
-  
 
-    
+    /**
+     * Sets the credit statement for the account.
+     * @param statement The credit statement to be associated with the account.
+     */
     public void setCreditStatement(CreditStatement statement) {
         this.creditStatement = statement;
     }
 
- 
+    /**
+     * Sets the credit limit for the account.
+     * @param creditLimit The new credit limit to be set.
+     * @throws IllegalArgumentException if the credit limit is negative.
+     */
     public void setCreditLimit(double creditLimit) {
         if (creditLimit < 0) {
             throw new IllegalArgumentException("Credit limit cannot be negative");
@@ -32,6 +43,12 @@ public class CreditAccount {
         this.creditLimit = creditLimit;
     }
   
+    /**
+     * Repays a certain amount of credit.
+     * This method updates the credit balance and available credit accordingly.
+     * It also logs the transaction in the credit statement.
+     * @param amount The amount to be repaid.
+     */
     public void repayCredit(double amount) {
         if (amount < 0) {
             System.out.println("Repayment amount cannot be negative.");
@@ -59,6 +76,12 @@ public class CreditAccount {
         }
     }
 
+    /**
+     * Borrows a certain amount of credit.
+     * This method updates the credit balance and available credit accordingly.
+     * It also logs the transaction in the credit statement.
+     * @param amount The amount to be borrowed.
+     */
     public void borrowCredit(double amount) {
         if (amount < 0) {
         	System.out.println("Borrow amount cannot be negative.");
@@ -74,12 +97,17 @@ public class CreditAccount {
         this.availableCredit -= amount;
     }
 
-    // Check if the account can borrow a certain amount based on the available credit
+    /**
+     * Checks if the account is eligible for a certain amount of credit.
+     * @param amountToBorrow The amount to check eligibility for.
+     * @return true if eligible, false otherwise.
+     */
     public boolean isEligibleForCredit(double amountToBorrow) {
         return (this.creditBalance + amountToBorrow) <= getAvailableCredit();
     }
     
-      
+    
+    //Getters
     public double getCreditBalance() {
         return creditBalance;
     }
