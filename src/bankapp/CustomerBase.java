@@ -90,7 +90,7 @@ public class CustomerBase {
      * @return true if the customer exists, false otherwise
      */
     public boolean exist(String username) {
-    	return this.users.containsKey(username);
+    	return users.containsKey(username);
     }
     
     /**
@@ -100,7 +100,7 @@ public class CustomerBase {
      * @return The Customer object if found, or null if not found
      */
     public Customer get(String username) {
-    	return this.users.get(username);
+    	return users.get(username);
     }
     
     /**

@@ -141,9 +141,8 @@ public class Customer {
         if (creditAccount != null) {
             throw new IllegalStateException("Credit account already exists");
         }
-        this.creditAccount = new CreditAccount(this.username, new CreditStatement(this));
-        this.creditAccount.setCreditStatement(new CreditStatement(this));
-    
+        creditAccount = new CreditAccount(username, new CreditStatement(this));
+        creditAccount.setCreditStatement(new CreditStatement(this));  
     }
     
     /**
