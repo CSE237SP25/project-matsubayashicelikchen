@@ -72,49 +72,82 @@ N/A
 
 In this iteration, our team further enhanced and extended the foundation of our banking system by refining several key components and beginning integration between modules. Each team member continued to focus on specific areas, ensuring progress toward a more comprehensive system.
 
-Jason and Refik collaboratively advanced the integration between customer information and account management. Their joint efforts improved how customer profiles interact with account functionalities, setting the stage for smoother operations across various account types.
+Jason Li and Refik Celik collaboratively advanced the integration between customer information and account management. Their efforts in Figure 1 demonstrate improvements in how customer profiles interact with account functionalities, setting the stage for smoother operations across various account types.
 
-Refik further contributed by working on the savings account functionality and reinforcing personal information handling. His work continues to refine the methods by which users can open and manage savings accounts, even though this module is not yet entirely complete.
+Refik Celik further contributed in Figure 2 by focusing on improving the savings account functionality and reinforcing the personal information handling process. His work continues to refine the methods by which users can open and manage savings accounts, even though this module is not entirely complete yet.
 
-Ethan built upon his previous work by enhancing core transaction functionalities. He refined the deposit and withdrawal operations and ensured that every transaction is logged accurately using a file-based persistence mechanism. This improvement lays the groundwork for more robust transaction tracking.
+Ethan Matsubayashi built upon his previous work by enhancing the core transaction functionalities. In Figure 3, he refined the deposit and withdrawal operations and ensured that each transaction is logged accurately using our file-based persistence mechanism. This improvement lays the groundwork for more robust transaction tracking.
 
-James continued his efforts on overall bank account management and secure fund transfers. His work further improved validations and consistency in transaction processing, which is critical for maintaining account integrity and reliability.
+James Chen continued his efforts on overall bank account management and secure fund transfers, as illustrated in Figure 5. His work further improved the validations and consistency of transaction processing, which is critical for maintaining account integrity and reliability.
 
 Together, our team’s efforts in this iteration have extended the groundwork from Iteration 1, moving us closer to a fully integrated and secure banking system.
+
+
 
 ##### Completed User Stories:
 
 - **Enhanced Customer and Account Integration:**
-   Jason and Refik jointly improved the connection between customer profiles and account data, enabling more seamless management of personal information and account functionalities.
+  Jason Li and Refik Celik jointly improved the connection between customer profiles and account data, enabling more seamless management of personal information and account functionalities.
 - **Improved Transaction Logging:**
-   Ethan refined the core deposit and withdrawal processes, ensuring that every transaction is logged persistently and accurately for later retrieval.
+  Ethan Matsubayashi refined the core deposit and withdrawal processes, ensuring that every transaction is logged persistently and accurately for later retrieval.
 - **Advanced Credit Operations:**
-   Credit management functions—including borrowing and repaying credit—have been further stabilized, ensuring that users can manage unexpected expenses with improved error handling.
+  Credit management functions—including borrowing and repaying credit—have been further stabilized, ensuring that users can manage unexpected expenses with improved error handling.
 - **Secure Fund Transfer Enhancements:**
-   James contributed crucial validations and processing improvements, ensuring that fund transfers and transaction operations maintain robust security standards.
+  James Chen contributed crucial validations and processing improvements, ensuring that fund transfers and transaction operations maintain robust security standards.
 
 
 
 ##### Upcoming User Stories:
 
 - **Secure Registration and Login:**
-   Future iterations will concentrate on implementing a secure registration and login process that incorporates advanced authentication, password encryption, and session management.
+  Future iterations will concentrate on implementing a secure registration and login process that incorporates advanced authentication, password encryption, and session management.
 - **Fund Transfers Between Accounts:**
-   Plans are in place to allow users to transfer funds between different accounts. This feature will incorporate real-time balance updates, additional validations, and comprehensive transaction logging.
+  Plans are in place to allow users to transfer funds between different accounts. This feature will incorporate real-time balance updates, additional validations, and comprehensive transaction logging.
 - **Notification System Integration:**
-   We aim to develop an alert system that will notify users via email or in-app messages when large or unusual transactions occur, thereby enhancing account security.
+  We aim to develop an alert system that will notify users via email or in-app messages when large or unusual transactions occur, thereby enhancing account security.
 - **Scheduled Recurring Transactions:**
-   The next phase will introduce features for setting up recurring transactions, such as automatic bill payments. Users will have options for scheduling, reminders, and customizable setups.
+  The next phase will introduce features for setting up recurring transactions, such as automatic bill payments. Users will have options for scheduling, reminders, and customizable setups.
 - **Administrative Reporting:**
-   Future work will extend our file-based logging to provide enhanced reporting tools, allowing administrators to access detailed transaction logs and user activity reports.
+  Future work will extend our file-based logging to provide enhanced reporting tools, allowing administrators to access detailed transaction logs and user activity reports.
 
 
 
 ##### Not Currently Working Functions:
 
 - **Savings Account Functionality:**
-   While users can trigger the opening of a savings account, the complete integration and full feature set for savings accounts are not yet fully operational.
+  While users can trigger the opening of a savings account, the complete integration and full feature set for savings accounts are not yet fully operational.
 - **Bank Account and Checking Account Menu Integration:**
-   Basic operations such as deposits, withdrawals, and balance displays are functional. However, the seamless synchronization between these account modules and the menu system requires further refinement to ensure that all updates are accurately reflected in the user interface.
+  Basic operations such as deposits, withdrawals, and balance displays are functional. However, the seamless synchronization between these account modules and the menu system requires further refinement to ensure that all updates are accurately reflected in the user interface.
 - **Database Connection to Account Modules:**
-   The system’s database integration—which should connect and synchronize data for the various account types—is not yet working. Further development is required to establish a reliable connection between our data repository and the account modules, ensuring that account data (including transactions and balances) is properly maintained across the system.
+  The system’s database integration—which should connect and synchronize data for the various account types—is not yet working. Further development is required to establish a reliable connection between our data repository and the account modules, ensuring that account data (including transactions and balances) is properly maintained across the system.
+
+
+
+
+
+#### Iteration 3
+
+Team work:
+In this final iteration, our team brought all modules—checking, savings, credit, mortgage and transfers—into a unified, production-ready banking system. We harmonized menu flows, tightened input validation, and guaranteed end-to-end persistence of every transaction. Each member concentrated on polishing their area while ensuring seamless integration:
+
+Refik finalized the savings-account enhancements by building a complete statement generator and enforcing persistent logging for every deposit and withdrawal. His work ensures that users can request and review a formatted savings statement at any time.
+
+Ethan strengthened both security and robustness in transaction handling. He introduced a password-confirmation step for withdrawals over the high-value threshold and refactored the statement loader to auto-create missing files and gracefully skip malformed entries on startup.
+
+Jason delivered the remaining credit and mortgage features. In the credit service menu, he integrated a comprehensive CreditStatement view showing credit limit, available credit, credit score, and full borrow/repay history. He also refined the HouseLoan module to calculate principal with interest, validate payment input, process repayments, and update the outstanding balance interactively.
+
+James completed the cross-user fund-transfer capability. His implementation in the Menu class performs balance checks, prompts for password confirmation on large transfers, confirms recipient identity, updates both sender and receiver accounts, and appends each side’s transaction to its statement file.
+
+##### Completed User Stories:
+
+As a bank customer, I want to view a formatted savings account statement so that I can easily review my deposit and withdrawal history. This was delivered by implementing SavingsStatement, which reads the SavingsAccount log, formats each entry with date, description, amount and type, and displays it in a clear table.
+
+As a bank customer, I want withdrawals over a high-value limit to require password confirmation so that I can prevent unauthorized or accidental large transactions. This was delivered by adding a “large-sum withdrawal” step in Menu, which prompts for and verifies the user’s password before proceeding.
+
+As a bank customer, I want the system to load all existing transaction statements reliably on startup, handling missing or corrupted files without errors. This was delivered by enhancing Statement.loadStatement to auto-create absent files, skip invalid lines, and initialize each user’s activity list safely.
+
+As a bank customer, I want to view a complete credit-account statement—including limit, available credit, score, and detailed borrow/repay history—so that I can track my credit usage. This was delivered by integrating CreditStatement.generateStatement into the credit menu and formatting all account metrics and transactions for display.
+
+As a bank customer, I want to apply for a house loan and make repayments within the system so that I can manage my mortgage. This was delivered by refining HouseLoan to calculate principal with interest based on home price and down payment, validate payment amounts, process repayments, and update the remaining balance through the menu.
+
+As a bank customer, I want to transfer funds securely to another user so that I can send payments within the bank network. This was delivered by implementing transferFunds in Menu, which verifies sender balance, requires password confirmation on large amounts, confirms the recipient, updates both accounts, and logs both sides’ transactions.
