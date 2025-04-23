@@ -35,9 +35,12 @@ public class CustomerBase {
         if (userDirs == null) return;
         for (File userDir : userDirs) {
             File infoFile = new File(userDir, "info.txt");
+            File accountsFile = new File(userDir, "accounts.txt");
+            
             if (!infoFile.exists() || !infoFile.isFile()) {
                 continue;
             }
+            
             try (BufferedReader br = new BufferedReader(new FileReader(infoFile))) {
                 String username = br.readLine();
                 String password = br.readLine();
@@ -45,8 +48,24 @@ public class CustomerBase {
                 String lastName = br.readLine();
                 String email = br.readLine();
                 String phone = br.readLine();
-                if (username != null && password != null && firstName != null && lastName != null && email != null && phone != null) {
+                
+                if (username != null && password != null && firstName != null && 
+                    lastName != null && email != null && phone != null) {
+                    
                     Customer customer = new Customer(username, password, firstName, lastName, email, phone);
+                    
+                    // Load account data if available
+                    if (accountsFile.exists()) {
+                        try (BufferedReader accBr = new BufferedReader(new FileReader(accountsFile))) {
+                            StringBuilder accountData = new StringBuilder();
+                            String line;
+                            while ((line = accBr.readLine()) != null) {
+                                accountData.append(line).append("\n");
+                            }
+                            customer.updateAccountsFromString(accountData.toString());
+                        }
+                    }
+                    
                     users.put(username, customer);
                 }
             } catch (IOException e) {
@@ -73,14 +92,25 @@ public class CustomerBase {
             userDir.mkdirs();
         }
         File infoFile = new File(userDir, "info.txt");
-        try (FileWriter fw = new FileWriter(infoFile)) {
-            fw.write(customer.toString());
+        File accountsFile = new File(userDir, "accounts.txt");
+        
+        try {
+            // Save customer info
+            try (FileWriter fw = new FileWriter(infoFile)) {
+                fw.write(customer.toString());
+            }
+            
+            // Save account data
+            try (FileWriter accFw = new FileWriter(accountsFile)) {
+                accFw.write(customer.accountsToString());
+            }
+            
+            users.put(customer.getUsername(), customer);
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
-        users.put(customer.getUsername(), customer);
-        return true;
     }
     
     /**
@@ -119,14 +149,25 @@ public class CustomerBase {
             userDir.mkdirs();
         }
         File infoFile = new File(userDir, "info.txt");
-        try (FileWriter fw = new FileWriter(infoFile)) {
-            fw.write(customer.toString());
+        File accountsFile = new File(userDir, "accounts.txt");
+        
+        try {
+            // Update customer info
+            try (FileWriter fw = new FileWriter(infoFile)) {
+                fw.write(customer.toString());
+            }
+            
+            // Update account data
+            try (FileWriter accFw = new FileWriter(accountsFile)) {
+                accFw.write(customer.accountsToString());
+            }
+            
+            users.put(customer.getUsername(), customer);
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
-        users.put(customer.getUsername(), customer);
-        return true;
     }
     
     /**

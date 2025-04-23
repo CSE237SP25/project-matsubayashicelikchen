@@ -65,4 +65,10 @@ public class BankAccount {
         }
         return true;
     }
+    
+    
+    
+    public void setCurrentBalance(double balance) {
+        this.balance = balance;
+    }
 }

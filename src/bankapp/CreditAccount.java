@@ -131,4 +131,8 @@ public class CreditAccount {
    public String getUsername() {
        return username;
    }
+   
+   public void setCreditBalance(double balance) {
+	    this.creditBalance = balance;
+	}
 }
