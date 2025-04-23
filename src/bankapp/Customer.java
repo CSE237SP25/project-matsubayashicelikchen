@@ -181,4 +181,63 @@ public class Customer {
     	String res = username+"\n"+password+"\n"+firstName+"\n"+lastName+"\n"+email+"\n"+phone;
     	return res;
     }
+    
+    
+ // Update accountsToString in Customer class
+    public String accountsToString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("CHECKING:").append(checkingAccount.getCurrentBalance()).append("\n");
+        
+        if (savingsAccount != null) {
+            sb.append("SAVINGS:").append(savingsAccount.getBalance()).append("\n");
+        }
+        
+        if (creditAccount != null) {
+            sb.append("CREDIT:").append(creditAccount.getCreditBalance()).append("\n");
+        }
+        
+        if (houseLoan != null) {
+            sb.append("HOUSELOAN:").append(houseLoan.toDataString()).append("\n");
+        }
+        
+        return sb.toString();
+    }
+
+    // Update updateAccountsFromString in Customer class
+    public void updateAccountsFromString(String accountData) {
+        String[] lines = accountData.split("\n");
+        for (String line : lines) {
+            String[] parts = line.split(":", 2); // Split only on first colon
+            if (parts.length != 2) continue;
+            
+            String accountType = parts[0];
+            String data = parts[1];
+            
+            switch (accountType) {
+                case "CHECKING":
+                    checkingAccount.setCurrentBalance(Double.parseDouble(data));
+                    break;
+                case "SAVINGS":
+                    if (savingsAccount == null) {
+                        openSavingsAccount(Double.parseDouble(data));
+                    } else {
+                        savingsAccount.setBalance(Double.parseDouble(data));
+                    }
+                    break;
+                case "CREDIT":
+                    if (creditAccount == null) {
+                        openCreditAccount();
+                    }
+                    creditAccount.setCreditBalance(Double.parseDouble(data));
+                    break;
+                case "HOUSELOAN":
+                    if (houseLoan == null) {
+                        // Create a dummy loan first
+                        houseLoan = new HouseLoan(0, 0);
+                    }
+                    houseLoan.fromDataString(data);
+                    break;
+            }
+        }
+    }
 }

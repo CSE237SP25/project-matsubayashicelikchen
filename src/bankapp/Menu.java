@@ -58,10 +58,9 @@ public class Menu {
 		Menu bankMenu = new Menu();
 		bankMenu.run();
 	}
-	
+
 	/**
-	 * Constructor for Menu class
-	 * Initializes the instance variables for the class
+	 * Constructor for Menu class Initializes the instance variables for the class
 	 */
 	public Menu() {
 		keyboardInput = new Scanner(System.in);
@@ -69,7 +68,7 @@ public class Menu {
 		checkingStatement = new Statement("checking.txt");
 		currentUser = null;
 	}
-	
+
 	/**
 	 * Utility method to select the appropriate handler for the user
 	 */
@@ -93,8 +92,8 @@ public class Menu {
 	}
 
 	/**
-	 * Retrieves the option the user wants to select.
-	 * Can be used to handle integer inputs for things other than selecting an option.
+	 * Retrieves the option the user wants to select. Can be used to handle integer
+	 * inputs for things other than selecting an option.
 	 * 
 	 * @return The option number selected by the user.
 	 */
@@ -127,8 +126,8 @@ public class Menu {
 	}
 
 	/**
-	 * Retrieves a positive double from the user.
-	 * Generally for things like payments.
+	 * Retrieves a positive double from the user. Generally for things like
+	 * payments.
 	 * 
 	 * @return A positive double value written by the user.
 	 */
@@ -155,9 +154,9 @@ public class Menu {
 	}
 
 	/**
-	 * Checks whether the user exists in the data base and whether the
-	 * password is correct. If both are correct sets the current user to
-	 * be the user that logged in.
+	 * Checks whether the user exists in the data base and whether the password is
+	 * correct. If both are correct sets the current user to be the user that logged
+	 * in.
 	 */
 	public void login() {
 		System.out.println("Enter your username or input q to quit");
@@ -196,9 +195,10 @@ public class Menu {
 		}
 		initializeNewCustomer(username);
 	}
-	
+
 	/**
 	 * A helper function for register() that creates and initializes a new customer
+	 * 
 	 * @param username A unique username for the customer
 	 */
 	private void initializeNewCustomer(String username) {
@@ -242,7 +242,7 @@ public class Menu {
 		}
 
 	}
-	
+
 	/**
 	 * Handles the view and actions after a user logs in
 	 */
@@ -276,6 +276,7 @@ public class Menu {
 				System.out.println("Credit account already exists.");
 			} else {
 				currentUser.openCreditAccount();
+				userRepository.update(currentUser);
 				System.out.println("Credit account opened successfully.");
 			}
 			break;
@@ -316,10 +317,9 @@ public class Menu {
 			System.out.println("Invalid Option");
 		}
 	}
-	
+
 	/**
-	 * Helper method for handleUser()
-	 * Displays user's personal information 
+	 * Helper method for handleUser() Displays user's personal information
 	 */
 	private void viewInfo() {
 		if (currentUser == null) {
@@ -332,10 +332,10 @@ public class Menu {
 		System.out.println("Email: " + currentUser.getEmail());
 		System.out.println("Phone: " + currentUser.getPhone());
 	}
-	
+
 	/**
-	 * Helper method for handleUser()
-	 * Validates user and allows user to change their password.
+	 * Helper method for handleUser() Validates user and allows user to change their
+	 * password.
 	 */
 	private void changePassword() {
 		System.out.print("Enter current password: ");
@@ -359,10 +359,9 @@ public class Menu {
 			System.out.println("Password update failed.");
 		}
 	}
-	
+
 	/**
-	 * Helper method for handleUser()
-	 * Allows user to modify personal information
+	 * Helper method for handleUser() Allows user to modify personal information
 	 */
 	private void editInfo() {
 		System.out.print("Enter new first name (" + currentUser.getFirstName() + "): ");
@@ -391,10 +390,10 @@ public class Menu {
 			System.out.println("Failed to update information.");
 		}
 	}
-	
+
 	/**
-	 * Helper method for handleUser()
-	 * Confirms request to delete account. If confirmed deletes account.
+	 * Helper method for handleUser() Confirms request to delete account. If
+	 * confirmed deletes account.
 	 */
 	private void deleteAccount() {
 		System.out.print("Are you sure you want to delete your account? (y/n): ");
@@ -410,10 +409,10 @@ public class Menu {
 			System.out.println("Failed to delete account.");
 		}
 	}
-	
+
 	/**
-	 * Helper method for handleUser()
-	 * Deposits money into the checking account if a valid amount is entered.
+	 * Helper method for handleUser() Deposits money into the checking account if a
+	 * valid amount is entered.
 	 */
 	private void deposit() {
 		System.out.println("Enter the amount you want to deposit");
@@ -424,11 +423,12 @@ public class Menu {
 		}
 		currentUser.getCheckingAccount().deposit(amount);
 		checkingStatement.add(currentUser, amount);
+		userRepository.update(currentUser);
 	}
-	
+
 	/**
-	 * Helper method for handleUser()
-	 * Withdraws money from the checking account if a valid amount is requested.
+	 * Helper method for handleUser() Withdraws money from the checking account if a
+	 * valid amount is requested.
 	 */
 	private void withdraw() {
 		System.out.println("Enter the number you want to WITHDRAW");
@@ -445,12 +445,12 @@ public class Menu {
 		}
 		currentUser.getCheckingAccount().withdraw(amount);
 		checkingStatement.add(currentUser, -amount);
+		userRepository.update(currentUser);
 	}
-	
+
 	/**
-	 * Helper method for handleUser()
-	 * Opens a savings account with an initial deposit for the customer
-	 * if they do not have one already.
+	 * Helper method for handleUser() Opens a savings account with an initial
+	 * deposit for the customer if they do not have one already.
 	 */
 	private void openSaving() {
 		if (currentUser.getSavingsAccount() != null) {
@@ -464,13 +464,13 @@ public class Menu {
 			return;
 		}
 		currentUser.openSavingsAccount(amount);
+		userRepository.update(currentUser);
 		System.out.println("Savings account opened successfully");
 	}
-	
+
 	/**
-	 * Helper method for handleUser().
-	 * checks if a credit account exists. 
-	 * If it does sets state to view the credit panel.
+	 * Helper method for handleUser(). checks if a credit account exists. If it does
+	 * sets state to view the credit panel.
 	 */
 	private void viewCredit() {
 		if (currentUser.getCreditAccount() == null) {
@@ -481,9 +481,8 @@ public class Menu {
 	}
 
 	/**
-	 * Helper method for handleUser().
-	 * checks if a savings account exists. 
-	 * If it does sets state to view the savings panel.
+	 * Helper method for handleUser(). checks if a savings account exists. If it
+	 * does sets state to view the savings panel.
 	 */
 	private void viewSaving() {
 		if (currentUser.getSavingsAccount() == null) {
@@ -492,13 +491,11 @@ public class Menu {
 		}
 		isSaving = true;
 	}
-	
+
 	/**
-	 * Helper method for handleUser().
-	 * Transfers funds from one customer's checking account to 
-	 * another customer's checking account. If the amount the user
-	 * wants to transfer is a large sum of money it is validated by 
-	 * password protection.
+	 * Helper method for handleUser(). Transfers funds from one customer's checking
+	 * account to another customer's checking account. If the amount the user wants
+	 * to transfer is a large sum of money it is validated by password protection.
 	 */
 	private void transferFunds() {
 		System.out.println("Enter the amount you want to transfer: ");
@@ -535,14 +532,19 @@ public class Menu {
 		}
 		currentUser.getCheckingAccount().withdraw(amount);
 		checkingStatement.add(currentUser, -amount);
-		userRepository.get(recipientUsername).getCheckingAccount().deposit(amount);
-		checkingStatement.add(userRepository.get(recipientUsername), amount);
+		userRepository.update(currentUser);
+
+		Customer recipient = userRepository.get(recipientUsername);
+		recipient.getCheckingAccount().deposit(amount);
+		checkingStatement.add(recipient, amount);
+		userRepository.update(recipient);
+
 		System.out.println("Transfer successful");
 	}
-	
+
 	/**
-	 * Ensures the current user really wants to transact a large sum of money
-	 * and password protects this transaction.
+	 * Ensures the current user really wants to transact a large sum of money and
+	 * password protects this transaction.
 	 * 
 	 * @return The status of the transaction i.e. whether it was successful or not.
 	 */
@@ -557,10 +559,10 @@ public class Menu {
 		System.out.println("Identity confirmed.");
 		return true;
 	}
-	
+
 	/**
-	 * Helper method for handleUser()
-	 * If a savings account exists for the customer it prints the savings statement
+	 * Helper method for handleUser() If a savings account exists for the customer
+	 * it prints the savings statement
 	 */
 	private void viewSavingStatement() {
 		if (currentUser.getSavingsAccount() == null) {
@@ -571,14 +573,13 @@ public class Menu {
 		System.out.println("Press any key to continue...");
 		handleUserInput();
 	}
-	
+
 	/**
 	 * Handles the view and actions relating to a user's credit account.
 	 */
 	public void handleCredit() {
 		System.out.println("Your current credit balance is " + currentUser.getCreditAccount().getCreditBalance());
-		System.out.println(
-				"Your current available credit is " + currentUser.getCreditAccount().getAvailableCredit());
+		System.out.println("Your current available credit is " + currentUser.getCreditAccount().getAvailableCredit());
 		System.out.println("Your current credit limit is " + currentUser.getCreditAccount().getCreditLimit());
 		System.out.println("Your current credit score is " + currentUser.getCreditAccount().getCreditScore());
 		creditPanel();
@@ -588,11 +589,13 @@ public class Menu {
 			System.out.println("Enter the amount you want to borrow");
 			int amountToBrorrow = handleOptionInput();
 			currentUser.getCreditAccount().borrowCredit(amountToBrorrow);
+			userRepository.update(currentUser);
 			break;
 		case CREDIT_PAY:
 			System.out.println("Enter the amount you want to pay");
 			int amountToPay = handleOptionInput();
 			currentUser.getCreditAccount().repayCredit(amountToPay);
+			userRepository.update(currentUser);
 			break;
 		case CREDIT_EXIT:
 			isCredit = false;
@@ -606,8 +609,7 @@ public class Menu {
 	 * Handles the view and actions relating to a user's savings account.
 	 */
 	public void handleSaving() {
-		System.out.println(
-				"Your current savings account balance is " + currentUser.getSavingsAccount().getBalance());
+		System.out.println("Your current savings account balance is " + currentUser.getSavingsAccount().getBalance());
 		savingPanel();
 		int option = handleOptionInput();
 		switch (option) {
@@ -623,6 +625,7 @@ public class Menu {
 				return;
 			}
 			currentUser.getSavingsAccount().withdraw(amountWithdraw);
+			userRepository.update(currentUser);
 			break;
 		case CREDIT_PAY:
 			System.out.println("Enter the amount you want to deposit");
@@ -632,6 +635,7 @@ public class Menu {
 				return;
 			}
 			currentUser.getSavingsAccount().deposit(amountDeposit);
+			userRepository.update(currentUser);
 			break;
 		case CREDIT_EXIT:
 			isSaving = false;
@@ -664,6 +668,7 @@ public class Menu {
 					downPayment = handlePositiveDoubleValue();
 				}
 				currentUser.getLoanForHouse(housePrice, downPayment);
+				userRepository.update(currentUser);
 			}
 			break;
 		case PAY_HOUSE_LOAN:
@@ -680,6 +685,7 @@ public class Menu {
 				System.out.println("Enter the amount you want to pay");
 				double payment = handlePositiveDoubleValue();
 				currentUser.getHouseLoan().makePayment(payment);
+				userRepository.update(currentUser);
 			}
 			break;
 		case EXIT_HOUSE_LOAN:
@@ -715,8 +721,8 @@ public class Menu {
 	}
 
 	/**
-	 * Displays various account balances if opened and displays options 
-	 * for the customer to select.
+	 * Displays various account balances if opened and displays options for the
+	 * customer to select.
 	 */
 	public void userPanel() {
 		System.out.println("Welcome " + currentUser.getUsername());
@@ -738,11 +744,10 @@ public class Menu {
 		System.out.println("15. House loan service");
 		System.out.println("16. logout");
 	}
-	
+
 	/**
-	 * Helper method for userPanel()
-	 * Displays the checking account balance. If credit and savings accounts exist
-	 * it also displays their balance too.
+	 * Helper method for userPanel() Displays the checking account balance. If
+	 * credit and savings accounts exist it also displays their balance too.
 	 */
 	private void viewBalance() {
 		System.out.println("Your current Balance is: $" + currentUser.getCheckingAccount().getCurrentBalance());
@@ -760,7 +765,6 @@ public class Menu {
 		}
 	}
 
-	
 	/**
 	 * Displays options for credit services.
 	 */
